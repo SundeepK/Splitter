@@ -1,0 +1,6 @@
+[submodule "Box2d-tools"]
+	path = Box2d-tools
+	url = https://github.com/SundeepK/Box2d-tools.git
+[submodule "SFML-tools"]
+	path = SFML-tools
+	url = https://github.com/SundeepK/SFML-tools.git

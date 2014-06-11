@@ -1,10 +1,13 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
-#include <iostream>
-#include <Box2D/Box2D.h>
-#include "SFMLB2DebugDraw.h"
 
+#include "B2DWorld.h"
+#include "B2BoxBuilder.h"
+#include <functional>
+#include <iostream>
+#include "ActionController.h"
+#include <string>
 
 int main()
 {
@@ -22,36 +25,32 @@ int main()
     sf::VertexArray sliceLine(sf::Lines, 2);
     bool isleftPressed = false;
 
-    b2World m_world(b2Vec2(0.0f,9.8f));
+    //box
+    B2DWorld box2DWorld(9.8f);
     SFMLB2dDebugDraw drawer(App);
+    box2DWorld.setDebugDraw(drawer);
     drawer.SetFlags(b2Draw::e_shapeBit);
 
-    //build a simple box
-    m_world.SetDebugDraw(&drawer);
-    b2BodyDef myBodyDef;
-    myBodyDef.type = b2_dynamicBody; //this will be a dynamic body
-    myBodyDef.position.Set(20.0f/Box2DConstants::WORLD_SCALE+10/2.0f, 20.0f/Box2DConstants::WORLD_SCALE+10.0f/2.0f); //set the starting position
-    myBodyDef.angle = 0; //set the starting angle
-    b2Body* dynamicBody = m_world.CreateBody(&myBodyDef);
-    b2PolygonShape boxShape;
-    boxShape.SetAsBox(20.0f/Box2DConstants::WORLD_SCALE/2.0f,20.0f/Box2DConstants::WORLD_SCALE/2.0f);
-    b2FixtureDef boxFixtureDef;
-    boxFixtureDef.shape = &boxShape;
-    boxFixtureDef.density = 1;
-    dynamicBody->CreateFixture(&boxFixtureDef);
+    B2BoxBuilder builder(50,50);
+    builder
+    .bodyType(b2_dynamicBody)
+    .setPosition(b2Vec2(50,600))
+    .setDensity(1.0f);
+//    .setFriction(0.2f);
+    b2Body* b = box2DWorld.createB2Body(&builder);
+    b->ApplyLinearImpulse( b2Vec2(0.1f,0.1f), b->GetWorldCenter(), true);
+    b->SetBullet(true);
 
-    //floor
-    b2BodyDef ground;
-    ground.type = b2_staticBody; //this will be a dynamic body
-    ground.position.Set((30.0f/Box2DConstants::WORLD_SCALE)+70.0f/2.0f, (50.0f/Box2DConstants::WORLD_SCALE)+30.0f/2.0f); //set the starting position
-    ground.angle = 0; //set the starting angle
-    b2Body* groundBody = m_world.CreateBody(&ground);
-    b2PolygonShape groundbox;
-    groundbox.SetAsBox((700.0f/Box2DConstants::WORLD_SCALE)/2.0f,(30.0f/Box2DConstants::WORLD_SCALE)/2.0f);
-    b2FixtureDef groundFixture;
-    groundFixture.shape = &groundbox;
-    groundFixture.density = 1;
-    groundBody->CreateFixture(&groundFixture);
+    //ground
+    B2BoxBuilder groundShapebuilder(1200, 50);
+    groundShapebuilder
+    .bodyType(b2_staticBody)
+    .setPosition(b2Vec2(0,700))
+    .setDensity(1.0f);
+    box2DWorld.createB2Body(&groundShapebuilder);
+
+    sf::Clock deltaClock;
+
 
     while (App.isOpen())
     {
@@ -60,10 +59,11 @@ int main()
         while( App.pollEvent(event))
         {
 
-        if(isleftPressed) {
-             sliceLine[1].position = (sf::Vector2f(event.mouseMove.x, event.mouseMove.y));
-             sliceLine[1].color =     sf::Color::Red;
-        }
+            if(isleftPressed)
+            {
+                sliceLine[1].position = (sf::Vector2f(event.mouseMove.x, event.mouseMove.y));
+                sliceLine[1].color =     sf::Color::Red;
+            }
 
             if (event.type == sf::Event::MouseButtonPressed)
             {
@@ -78,20 +78,20 @@ int main()
                 }
             }
 
-           if (event.type == sf::Event::MouseButtonReleased)
+            if (event.type == sf::Event::MouseButtonReleased)
             {
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                 sliceLine[1].position = (sf::Vector2f(event.mouseButton.x, event.mouseButton.y));
-                 sliceLine[1].color =     sf::Color::Red;
-                 isleftPressed = false;
+                    sliceLine[1].position = (sf::Vector2f(event.mouseButton.x, event.mouseButton.y));
+                    sliceLine[1].color =     sf::Color::Red;
+                    isleftPressed = false;
 
                 }
             }
         }
 
-        m_world.Step(1/60.0f,8,3);
-	    m_world.DrawDebugData();
+
+        box2DWorld.update(deltaClock.restart().asSeconds());
 
         App.draw(sliceLine);
         App.display();
