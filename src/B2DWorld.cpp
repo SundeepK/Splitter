@@ -71,7 +71,6 @@ void B2DWorld::interpolateStates(){
 void B2DWorld::update(float accumulator){
 
 		step(FIXED_TIMESTEP);
-
 //	m_world.ClearForces();
 
     //smooth positions via interpolation
@@ -79,6 +78,22 @@ void B2DWorld::update(float accumulator){
 
 
 }
+
+
+void B2DWorld::rayCast(const sf::Vector2f& point1, const sf::Vector2f& point2) {
+    m_world.RayCast(&m_raycastCallback, b2Vec2(point1.x/Box2DConstants::WORLD_SCALE, point1.y/Box2DConstants::WORLD_SCALE),
+    b2Vec2(point2.x/Box2DConstants::WORLD_SCALE, point2.y/Box2DConstants::WORLD_SCALE));
+}
+
+std::vector<sf::Vector2f> B2DWorld::getIntersections(){
+  return  m_raycastCallback.getIntersections();
+}
+
+void B2DWorld::clearIntersects(){
+m_raycastCallback.clearPoints();
+}
+
+
 
 void B2DWorld::assertAccumilation(){
 	assert (

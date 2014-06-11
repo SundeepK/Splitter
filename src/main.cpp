@@ -58,6 +58,7 @@ int main()
     sf::Clock deltaClock;
 
 
+
     while (App.isOpen())
     {
 
@@ -88,24 +89,38 @@ int main()
             {
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
+                                        box2DWorld.clearIntersects();
+
                     sliceLine[1].position = (sf::Vector2f(event.mouseButton.x, event.mouseButton.y));
                     sliceLine[1].color =     sf::Color::Red;
                     isleftPressed = false;
-
+                    box2DWorld.rayCast(sliceLine[0].position, sliceLine[1].position);
                 }
             }
         }
 
 
         box2DWorld.update(deltaClock.restart().asSeconds());
+        std::vector<sf::Vector2f> points = box2DWorld.getIntersections();
 
-        App.draw(sliceLine);
-        App.display();
-        App.clear();
+        if(points.size() > 0){
+         for(std::vector<sf::Vector2f>::iterator it = points.begin(); it != points.end(); ++it)
+            {
+                sf::CircleShape circle(4);
+                circle.setFillColor(sf::Color::White);
+                circle.setPosition(sf::Vector2f(it->x-circle.getRadius(), it->y-circle.getRadius()));
+                App.draw(circle);
+            }
+        }
 
+
+            App.draw(sliceLine);
+            App.display();
+            App.clear();
+
+
+        }
 
     }
-
-}
 
 
