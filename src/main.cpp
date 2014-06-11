@@ -25,21 +25,27 @@ int main()
     sf::VertexArray sliceLine(sf::Lines, 2);
     bool isleftPressed = false;
 
-    //box
     B2DWorld box2DWorld(9.8f);
     SFMLB2dDebugDraw drawer(App);
     box2DWorld.setDebugDraw(drawer);
     drawer.SetFlags(b2Draw::e_shapeBit);
 
+    //box
     B2BoxBuilder builder(50,50);
     builder
     .bodyType(b2_dynamicBody)
     .setPosition(b2Vec2(50,600))
     .setDensity(1.0f);
-//    .setFriction(0.2f);
     b2Body* b = box2DWorld.createB2Body(&builder);
     b->ApplyLinearImpulse( b2Vec2(0.1f,0.1f), b->GetWorldCenter(), true);
-    b->SetBullet(true);
+
+    B2BoxBuilder secondndbox(50,50);
+    secondndbox
+    .bodyType(b2_dynamicBody)
+    .setPosition(b2Vec2(120,600))
+    .setDensity(1.0f);
+    b2Body* b2 = box2DWorld.createB2Body(&secondndbox);
+    b2->ApplyLinearImpulse( b2Vec2(0.1f,0.1f), b->GetWorldCenter(), true);
 
     //ground
     B2BoxBuilder groundShapebuilder(1200, 50);
