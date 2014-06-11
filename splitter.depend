@@ -1,0 +1,22 @@
+# depslib dependency file v1.0
+1402514605 source:/media/sundeep/3 tb Vol/code/splitter/src/main.cpp
+	<SFML/Graphics.hpp>
+	<SFML/System.hpp>
+	<SFML/Window.hpp>
+	<iostream>
+	<Box2D/Box2D.h>
+	"SFMLB2DebugDraw.h"
+
+1402513303 source:/media/sundeep/3 tb Vol/code/splitter/src/SFMLB2DebugDraw.cpp
+	"SFMLB2DebugDraw.h"
+
+1402513271 /media/sundeep/3 tb Vol/code/splitter/include/SFMLB2DebugDraw.h
+	"Box2DConstants.h"
+	<memory.h>
+	<SFML/System.hpp>
+	<SFML/Graphics.hpp>
+	<SFML/Window.hpp>
+	<Box2D/Box2D.h>
+
+1402513392 /media/sundeep/3 tb Vol/code/splitter/include/Box2DConstants.h
+
