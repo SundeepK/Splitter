@@ -90,7 +90,11 @@ std::vector<sf::Vector2f> B2DWorld::getIntersections(){
 }
 
 void B2DWorld::clearIntersects(){
-m_raycastCallback.clearPoints();
+m_raycastCallback.clearIntersects();
+}
+
+std::unordered_map<b2Body*,  IntersectPoints, TemplateHasher<b2Body*>> B2DWorld::getBodiesToIntersectPoints(){
+   return  m_raycastCallback.getBodiesToIntersectPoints();
 }
 
 

@@ -64,7 +64,9 @@
 		<Unit filename="SFML-tools/SFML-tools/src/RealtimeAndNode.cpp" />
 		<Unit filename="SFML-tools/SFML-tools/src/RealtimeOrNode.cpp" />
 		<Unit filename="include/B2DWorld.h" />
+		<Unit filename="include/RayCastCallback.h" />
 		<Unit filename="src/B2DWorld.cpp" />
+		<Unit filename="src/RayCastCallback.cpp" />
 		<Unit filename="src/main.cpp" />
 		<Extensions>
 			<code_completion />

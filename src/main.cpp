@@ -89,27 +89,38 @@ int main()
             {
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                                        box2DWorld.clearIntersects();
+                    box2DWorld.clearIntersects();
 
                     sliceLine[1].position = (sf::Vector2f(event.mouseButton.x, event.mouseButton.y));
                     sliceLine[1].color =     sf::Color::Red;
                     isleftPressed = false;
                     box2DWorld.rayCast(sliceLine[0].position, sliceLine[1].position);
-                }
+                    box2DWorld.rayCast(sliceLine[1].position, sliceLine[0].position);
+              }
             }
         }
 
 
         box2DWorld.update(deltaClock.restart().asSeconds());
-        std::vector<sf::Vector2f> points = box2DWorld.getIntersections();
+        std::unordered_map<b2Body*,  IntersectPoints, TemplateHasher<b2Body*>> bodiesToIntersects = box2DWorld.getBodiesToIntersectPoints();
 
-        if(points.size() > 0){
-         for(std::vector<sf::Vector2f>::iterator it = points.begin(); it != points.end(); ++it)
+        if(bodiesToIntersects.size() > 0){
+         for(auto it = bodiesToIntersects.begin(); it != bodiesToIntersects.end(); ++it)
             {
-                sf::CircleShape circle(4);
-                circle.setFillColor(sf::Color::White);
-                circle.setPosition(sf::Vector2f(it->x-circle.getRadius(), it->y-circle.getRadius()));
-                App.draw(circle);
+                sf::CircleShape entryCircle(4);
+                entryCircle.setFillColor(sf::Color::White);
+                entryCircle.setPosition(sf::Vector2f(it->second.entryPoint.x-entryCircle.getRadius(), it->second.entryPoint.y-entryCircle.getRadius()));
+                App.draw(entryCircle);
+
+                sf::CircleShape centerCircle(4);
+                centerCircle.setFillColor(sf::Color::White);
+                centerCircle.setPosition(sf::Vector2f(it->second.getCenter().x-centerCircle.getRadius(), it->second.getCenter().y-centerCircle.getRadius()));
+                App.draw(centerCircle);
+
+                sf::CircleShape exitCircle(4);
+                exitCircle.setFillColor(sf::Color::White);
+                exitCircle.setPosition(sf::Vector2f(it->second.exitPoint.x-exitCircle.getRadius(), it->second.exitPoint.y-exitCircle.getRadius()));
+                App.draw(exitCircle);
             }
         }
 

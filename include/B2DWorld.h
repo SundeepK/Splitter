@@ -32,6 +32,8 @@ public:
     void rayCast(const sf::Vector2f& point1, const sf::Vector2f& point2)  ;
     std::vector<sf::Vector2f> getIntersections();
     void clearIntersects();
+    std::unordered_map<b2Body*,  IntersectPoints, TemplateHasher<b2Body*>> getBodiesToIntersectPoints();
+
 
 protected:
 private:
