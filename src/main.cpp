@@ -8,6 +8,7 @@
 #include <iostream>
 #include "ActionController.h"
 #include <string>
+#include <math.h>
 
 void drawCircle(sf::RenderWindow& App, sf::Vector2f pos, sf::Color color)
 {
@@ -16,6 +17,10 @@ void drawCircle(sf::RenderWindow& App, sf::Vector2f pos, sf::Color color)
     entryCircle.setPosition(sf::Vector2f(pos.x-entryCircle.getRadius(), pos.y-entryCircle.getRadius()));
     App.draw(entryCircle);
 
+}
+
+int isCCW(sf::Vector2f p1, sf::Vector2f p2, sf::Vector2f p3){
+ return p1.x*p2.y+p2.x*p3.y+p3.x*p1.y-p1.y*p2.x-p2.y*p3.x-p3.y*p1.x;
 }
 
 int main()
@@ -112,19 +117,30 @@ int main()
 
         box2DWorld.update(deltaClock.restart().asSeconds());
         std::unordered_map<b2Body*,  IntersectPoints, TemplateHasher<b2Body*>> bodiesToIntersects = box2DWorld.getBodiesToIntersectPoints();
-
+        int count = 0;
         if(bodiesToIntersects.size() > 0){
          for(auto it = bodiesToIntersects.begin(); it != bodiesToIntersects.end(); ++it)
             {
+                b2Body* body = it->first;
+                b2PolygonShape* shape =((b2PolygonShape*)body->GetFixtureList()->GetShape());
 
-                //entry
-                drawCircle(App,it->second.entryPoint, sf::Color::White);
+                //all angles in radians
+
+                for(int vertextIndex = 0; vertextIndex < shape->GetVertexCount(); vertextIndex++){
+                    b2Vec2 vec = body->GetWorldPoint(shape->GetVertex(vertextIndex));
+                    vec.x =  vec.x *Box2DConstants::WORLD_SCALE;
+                    vec.y =  vec.y *Box2DConstants::WORLD_SCALE;
+
+                    int determinant =  isCCW(it->second.entryPoint, it->second.exitPoint, sf::Vector2f(vec.x, vec.y));
+
+
+
+                }
 
                 //center
                 drawCircle(App,it->second.getCenter(), sf::Color::White);
 
                 //exit
-                drawCircle(App,it->second.exitPoint, sf::Color::White);
 
             }
         }
