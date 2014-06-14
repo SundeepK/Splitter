@@ -56,6 +56,7 @@
 		<Unit filename="SFML-tools/SFML-tools/include/EventNode.h" />
 		<Unit filename="SFML-tools/SFML-tools/include/InputEventNode.h" />
 		<Unit filename="SFML-tools/SFML-tools/include/InputNodes.h" />
+		<Unit filename="SFML-tools/SFML-tools/include/TemplateHasher.h" />
 		<Unit filename="SFML-tools/SFML-tools/src/Action.cpp" />
 		<Unit filename="SFML-tools/SFML-tools/src/AndEventNode.cpp" />
 		<Unit filename="SFML-tools/SFML-tools/src/InputEventNode.cpp" />

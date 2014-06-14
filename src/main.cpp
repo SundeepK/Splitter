@@ -9,6 +9,15 @@
 #include "ActionController.h"
 #include <string>
 
+void drawCircle(sf::RenderWindow& App, sf::Vector2f pos, sf::Color color)
+{
+    sf::CircleShape entryCircle(4);
+    entryCircle.setFillColor(color);
+    entryCircle.setPosition(sf::Vector2f(pos.x-entryCircle.getRadius(), pos.y-entryCircle.getRadius()));
+    App.draw(entryCircle);
+
+}
+
 int main()
 {
     sf::ContextSettings settings;
@@ -107,20 +116,16 @@ int main()
         if(bodiesToIntersects.size() > 0){
          for(auto it = bodiesToIntersects.begin(); it != bodiesToIntersects.end(); ++it)
             {
-                sf::CircleShape entryCircle(4);
-                entryCircle.setFillColor(sf::Color::White);
-                entryCircle.setPosition(sf::Vector2f(it->second.entryPoint.x-entryCircle.getRadius(), it->second.entryPoint.y-entryCircle.getRadius()));
-                App.draw(entryCircle);
 
-                sf::CircleShape centerCircle(4);
-                centerCircle.setFillColor(sf::Color::White);
-                centerCircle.setPosition(sf::Vector2f(it->second.getCenter().x-centerCircle.getRadius(), it->second.getCenter().y-centerCircle.getRadius()));
-                App.draw(centerCircle);
+                //entry
+                drawCircle(App,it->second.entryPoint, sf::Color::White);
 
-                sf::CircleShape exitCircle(4);
-                exitCircle.setFillColor(sf::Color::White);
-                exitCircle.setPosition(sf::Vector2f(it->second.exitPoint.x-exitCircle.getRadius(), it->second.exitPoint.y-exitCircle.getRadius()));
-                App.draw(exitCircle);
+                //center
+                drawCircle(App,it->second.getCenter(), sf::Color::White);
+
+                //exit
+                drawCircle(App,it->second.exitPoint, sf::Color::White);
+
             }
         }
 
