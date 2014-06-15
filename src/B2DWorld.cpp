@@ -108,6 +108,7 @@ void B2DWorld::assertAccumilation(){
 
 
 
+
 void B2DWorld::resetStates(){
 
 for (b2Body * b = m_world.GetBodyList (); b != NULL; b = b->GetNext ())
@@ -122,6 +123,10 @@ for (b2Body * b = m_world.GetBodyList (); b != NULL; b = b->GetNext ())
 		c->smoothedAngle = c->previousAngle = b->GetAngle ();
 	}
 
+}
+
+void B2DWorld::deleteBody(b2Body* body){
+    m_world.DestroyBody(body);
 }
 
 

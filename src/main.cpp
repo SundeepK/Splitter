@@ -19,8 +19,15 @@ void drawCircle(sf::RenderWindow& App, sf::Vector2f pos, sf::Color color)
 
 }
 
-int isCCW(sf::Vector2f p1, sf::Vector2f p2, sf::Vector2f p3){
- return p1.x*p2.y+p2.x*p3.y+p3.x*p1.y-p1.y*p2.x-p2.y*p3.x-p3.y*p1.x;
+int isCCW(sf::Vector2f p1, sf::Vector2f p2, sf::Vector2f p3)
+{
+    return p1.x*p2.y+p2.x*p3.y+p3.x*p1.y-p1.y*p2.x-p2.y*p3.x-p3.y*p1.x;
+}
+
+B2BoxBuilder getBox2dBuilder(std::vector<b2Vec2> points, b2Body* body)
+{
+    B2BoxBuilder builder(points, body);
+    return builder;
 }
 
 int main()
@@ -110,7 +117,7 @@ int main()
                     isleftPressed = false;
                     box2DWorld.rayCast(sliceLine[0].position, sliceLine[1].position);
                     box2DWorld.rayCast(sliceLine[1].position, sliceLine[0].position);
-              }
+                }
             }
         }
 
@@ -118,41 +125,133 @@ int main()
         box2DWorld.update(deltaClock.restart().asSeconds());
         std::unordered_map<b2Body*,  IntersectPoints, TemplateHasher<b2Body*>> bodiesToIntersects = box2DWorld.getBodiesToIntersectPoints();
         int count = 0;
-        if(bodiesToIntersects.size() > 0){
-         for(auto it = bodiesToIntersects.begin(); it != bodiesToIntersects.end(); ++it)
+        std::vector<b2Body*> bodiesToDelete;
+        if(bodiesToIntersects.size() > 0)
+        {
+            for(auto it = bodiesToIntersects.begin(); it != bodiesToIntersects.end(); ++it)
             {
                 b2Body* body = it->first;
-                b2PolygonShape* shape =((b2PolygonShape*)body->GetFixtureList()->GetShape());
 
-                //all angles in radians
+                if(body != NULL)
+                {
 
-                for(int vertextIndex = 0; vertextIndex < shape->GetVertexCount(); vertextIndex++){
-                    b2Vec2 vec = body->GetWorldPoint(shape->GetVertex(vertextIndex));
-                    vec.x =  vec.x *Box2DConstants::WORLD_SCALE;
-                    vec.y =  vec.y *Box2DConstants::WORLD_SCALE;
+                    b2PolygonShape* shape =((b2PolygonShape*)body->GetFixtureList()->GetShape());
 
-                    int determinant =  isCCW(it->second.entryPoint, it->second.exitPoint, sf::Vector2f(vec.x, vec.y));
+                    //all angles in radians
 
+                    std::vector<b2Vec2> shapePoint1;
+                    std::vector<b2Vec2> shapePoint2;
 
+//                shapePoint1.push_back(it->second.entryPoint);
+//                shapePoint1.push_back(it->second.exitPoint);
+//                shapePoint2.push_back(it->second.entryPoint);
+//                shapePoint2.push_back(it->second.exitPoint);
+                    b2Vec2 entry(it->second.entryPoint.x/Box2DConstants::WORLD_SCALE, it->second.entryPoint.y/Box2DConstants::WORLD_SCALE);
+                    b2Vec2 exit(it->second.exitPoint.x/Box2DConstants::WORLD_SCALE, it->second.exitPoint.y/Box2DConstants::WORLD_SCALE);
 
+                    shapePoint1.push_back(entry);
+                    shapePoint1.push_back(exit);
+                    shapePoint2.push_back(entry);
+                    shapePoint2.push_back(exit);
+
+                    for(int vertextIndex = 0; vertextIndex < shape->GetVertexCount(); vertextIndex++)
+                    {
+                        b2Vec2 vec = body->GetWorldPoint(shape->GetVertex(vertextIndex));
+
+                        int determinant =  isCCW(it->second.entryPoint, it->second.exitPoint, sf::Vector2f(vec.x *Box2DConstants::WORLD_SCALE, vec.y *Box2DConstants::WORLD_SCALE));
+
+                        if(determinant > 0)
+                        {
+//                        shapePoint1.push_back(sf::Vector2f(vec.x, vec.y));
+                            shapePoint1.push_back(vec);
+                        }
+                        else
+                        {
+//                        shapePoint2.push_back(sf::Vector2f(vec.x, vec.y));
+                            shapePoint2.push_back(vec);
+                        }
+                    }
+
+//                for (sf::Vector2f point : shapePoint1){
+//                     drawCircle(App,point, sf::Color::Blue);
+//                }
+
+//                for (sf::Vector2f point : shapePoint2){
+//                     drawCircle(App,point, sf::Color::Red);
+//                }
+                    sf::Vector2f c  = it->second.getCenter();
+                    b2Vec2 center(c.x/Box2DConstants::WORLD_SCALE,c.y/Box2DConstants::WORLD_SCALE);
+               std::sort(shapePoint1.begin(), shapePoint1.end(), IntersectComp(center ));
+               std::sort(shapePoint2.begin(), shapePoint2.end(), IntersectComp(center ));
+//                    std::sort(shapePoint1.begin(), shapePoint1.end(), IntersectComp());
+//
+//                    int count = shapePoint1.size();
+//
+//                    int iCounterClockWise = 1;
+//                    int iClockWise = count - 1;
+//                    int i;
+//
+//                    b2Vec2 referencePointA,referencePointB;
+//                    b2Vec2 *sortedVertices[count];
+//
+//                    b2Vec2 v(shapePoint1[0].x, shapePoint1[0].y);
+//                    sortedVertices[0] = &v;
+//                    referencePointA = shapePoint1[0];          //leftmost point
+//                    referencePointB = shapePoint1[count-1];    //rightmost point
+//
+//                    //you arrange the points by filling our vertices in both clockwise and counter-clockwise directions using the determinant function
+//                    for (i=1; i<count-1; i++)
+//                    {
+//                        int  determinant = isCCW( sf::Vector2f(referencePointA.x, referencePointA.y), sf::Vector2f(referencePointB.x, referencePointB.y), sf::Vector2f(shapePoint1[i].x, shapePoint1[i].y));
+//                        if (determinant<0)
+//                        {
+//                            b2Vec2 v(shapePoint1[i].x, shapePoint1[i].y);
+//                            sortedVertices[iCounterClockWise++] = &v ;
+//                        }
+//                        else
+//                        {
+//                            b2Vec2 v(shapePoint1[i].x, shapePoint1[i].y);
+//                            sortedVertices[iClockWise--] = &v;
+//                        }//endif
+//                    }//endif
+//
+//                    b2Vec2 v2(shapePoint1[count-1].x, shapePoint1[count-1].y);
+//                    sortedVertices[iCounterClockWise] = &v2;
+//                    shapePoint1.clear();
+//                    for(int i = 0 ; i < count ; i++)
+//                    {
+//                        shapePoint1.push_back(*sortedVertices[i]);
+//                    }
+
+                    B2BoxBuilder builder = getBox2dBuilder(shapePoint1, body);
+                    b2Body* b = box2DWorld.createB2Body(&builder);
+
+                    B2BoxBuilder builder2 = getBox2dBuilder(shapePoint2, body);
+                    b2Body* b2 = box2DWorld.createB2Body(&builder2);
+
+                    drawCircle(App,it->second.getCenter(), sf::Color::White);
+
+                    bodiesToDelete.push_back(body);
                 }
-
-                //center
-                drawCircle(App,it->second.getCenter(), sf::Color::White);
-
-                //exit
 
             }
         }
 
-
-            App.draw(sliceLine);
-            App.display();
-            App.clear();
-
-
+        for (b2Body* body : bodiesToDelete)
+        {
+            box2DWorld.clearIntersects();
+            bodiesToIntersects.erase(body);
+            box2DWorld.deleteBody(body);
         }
 
+
+        App.draw(sliceLine);
+        App.display();
+        App.clear();
+
+
     }
+
+}
 
 

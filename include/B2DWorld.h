@@ -33,6 +33,8 @@ public:
     std::vector<sf::Vector2f> getIntersections();
     void clearIntersects();
     std::unordered_map<b2Body*,  IntersectPoints, TemplateHasher<b2Body*>> getBodiesToIntersectPoints();
+    void deleteBody(b2Body* body);
+
 
 
 protected:

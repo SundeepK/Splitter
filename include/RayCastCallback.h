@@ -22,6 +22,44 @@ struct IntersectPoints
 
 };
 
+struct IntersectComp : std::binary_function<b2Vec2, b2Vec2, bool>
+{
+    //Polar coordinate system
+    //sorting angles in counter-clockwise
+    b2Vec2 M;
+    IntersectComp(b2Vec2 v) : M(v) {}
+    bool operator() ( b2Vec2 o1,  b2Vec2 o2)
+
+    {
+
+        float ang1     = atan( ((o1.y - M.y)/(o1.x - M.x) ) * M_PI / 180);
+        float ang2     = atan( (o2.y - M.y)/(o2.x - M.x) * M_PI / 180);
+        if(ang1 < ang2) return true;
+        else if (ang1 > ang2) return false;
+
+        return true;
+    }
+};
+
+struct IntersectComp2 : std::binary_function<b2Vec2, b2Vec2, bool>
+{
+
+    bool operator() ( b2Vec2 va,  b2Vec2 vb)
+    {
+        if (va.x > vb.x)
+        {
+            return true;
+        }
+        else if (va.x < vb.x)
+        {
+            return false;
+        }
+        return false;
+    }
+};
+
+
+
 class RayCastCallback : public b2RayCastCallback
 {
     public:
