@@ -183,45 +183,6 @@ int main()
                     b2Vec2 center(c.x/Box2DConstants::WORLD_SCALE,c.y/Box2DConstants::WORLD_SCALE);
                std::sort(shapePoint1.begin(), shapePoint1.end(), IntersectComp(center ));
                std::sort(shapePoint2.begin(), shapePoint2.end(), IntersectComp(center ));
-//                    std::sort(shapePoint1.begin(), shapePoint1.end(), IntersectComp());
-//
-//                    int count = shapePoint1.size();
-//
-//                    int iCounterClockWise = 1;
-//                    int iClockWise = count - 1;
-//                    int i;
-//
-//                    b2Vec2 referencePointA,referencePointB;
-//                    b2Vec2 *sortedVertices[count];
-//
-//                    b2Vec2 v(shapePoint1[0].x, shapePoint1[0].y);
-//                    sortedVertices[0] = &v;
-//                    referencePointA = shapePoint1[0];          //leftmost point
-//                    referencePointB = shapePoint1[count-1];    //rightmost point
-//
-//                    //you arrange the points by filling our vertices in both clockwise and counter-clockwise directions using the determinant function
-//                    for (i=1; i<count-1; i++)
-//                    {
-//                        int  determinant = isCCW( sf::Vector2f(referencePointA.x, referencePointA.y), sf::Vector2f(referencePointB.x, referencePointB.y), sf::Vector2f(shapePoint1[i].x, shapePoint1[i].y));
-//                        if (determinant<0)
-//                        {
-//                            b2Vec2 v(shapePoint1[i].x, shapePoint1[i].y);
-//                            sortedVertices[iCounterClockWise++] = &v ;
-//                        }
-//                        else
-//                        {
-//                            b2Vec2 v(shapePoint1[i].x, shapePoint1[i].y);
-//                            sortedVertices[iClockWise--] = &v;
-//                        }//endif
-//                    }//endif
-//
-//                    b2Vec2 v2(shapePoint1[count-1].x, shapePoint1[count-1].y);
-//                    sortedVertices[iCounterClockWise] = &v2;
-//                    shapePoint1.clear();
-//                    for(int i = 0 ; i < count ; i++)
-//                    {
-//                        shapePoint1.push_back(*sortedVertices[i]);
-//                    }
 
                     B2BoxBuilder builder = getBox2dBuilder(shapePoint1, body);
                     b2Body* b = box2DWorld.createB2Body(&builder);
