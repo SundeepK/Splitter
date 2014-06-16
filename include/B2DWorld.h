@@ -12,7 +12,7 @@
 #include "Action.h"
 #include <functional>
 #include <iostream>
-#include "RayCastCallback.h"
+#include "Splitter.h"
 
 struct PhysicsComponent  {
 	float previousAngle;
@@ -32,7 +32,7 @@ public:
     void rayCast(const sf::Vector2f& point1, const sf::Vector2f& point2)  ;
     std::vector<sf::Vector2f> getIntersections();
     void clearIntersects();
-    std::unordered_map<b2Body*,  IntersectPoints, TemplateHasher<b2Body*>> getBodiesToIntersectPoints();
+    std::unordered_map<b2Body*,  IntersectionLineSegment, TemplateHasher<b2Body*>> getBodiesToIntersectPoints();
     void deleteBody(b2Body* body);
 
 
@@ -48,7 +48,7 @@ private:
     b2World m_world;
     float m_fixedTimestepAccumulator = 0.0f;
     float m_fixedTimestepAccumulatorRatio = 0.0f;
-    RayCastCallback m_raycastCallback;
+    Splitter m_raycastCallback;
 
     const float FIXED_TIMESTEP = 1.0f / 60.0f;
     const int MAX_STEPS = 5;

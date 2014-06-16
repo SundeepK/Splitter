@@ -10,24 +10,12 @@
 #include <unordered_map>
 #include "TemplateHasher.h"
 
-struct IntersectPoints
-{
-    public:
-    sf::Vector2f entryPoint;
-    sf::Vector2f exitPoint;
-
-    sf::Vector2f getCenter(){
-        return sf::Vector2f((entryPoint.x  + exitPoint.x)/2, (entryPoint.y  + exitPoint.y)/2);
-    }
-
-};
-
-struct IntersectComp : std::binary_function<b2Vec2, b2Vec2, bool>
+struct CCWComparator : std::binary_function<b2Vec2, b2Vec2, bool>
 {
     //Polar coordinate system
     //sorting angles in counter-clockwise
     b2Vec2 M;
-    IntersectComp(b2Vec2 v) : M(v) {}
+    CCWComparator(b2Vec2 v) : M(v) {}
     bool operator() ( b2Vec2 o1,  b2Vec2 o2)
 
     {
@@ -60,21 +48,46 @@ struct IntersectComp2 : std::binary_function<b2Vec2, b2Vec2, bool>
 
 
 
-class RayCastCallback : public b2RayCastCallback
+class Splitter : public b2RayCastCallback
 {
-    public:
-        RayCastCallback();
-        virtual ~RayCastCallback();
+public:
+        Splitter();
+        virtual ~Splitter();
         float32 ReportFixture(	b2Fixture* fixture, const b2Vec2& point,const b2Vec2& normal, float32 fraction);
         void clearPoints();
         void clearIntersects();
 
         std::vector<sf::Vector2f> getIntersections();
-        std::unordered_map<b2Body*,  IntersectPoints, TemplateHasher<b2Body*>> getBodiesToIntersectPoints();
+        std::unordered_map<b2Body*,  LineSegment, TemplateHasher<b2Body*>> getBodiesToIntersectPoints();
     protected:
     private:
+
+        struct LineSegment
+        {
+            public:
+                b2Vec2 entryPoint;
+                b2Vec2 exitPoint;
+
+                b2Vec2 getCenter()
+                {
+                    return b2Vec2((entryPoint.x  + exitPoint.x)/2, (entryPoint.y  + exitPoint.y)/2);
+                }
+
+        };
+
+        enum PointsDirection{
+            CCW,
+            CW,
+            COLLINEAR
+        };
+
+
+        void splitBox2dBody(b2Body body*, LineSegment intersectionLine);
+        PointsDirection isCCW(sf::Vector2f p1, sf::Vector2f p2, sf::Vector2f p3);
+
+
         std::vector<sf::Vector2f> m_intersectionPoints;
-        std::unordered_map<b2Body*,  IntersectPoints, TemplateHasher<b2Body*>> m_b2BodiesToIntersections;
+        std::unordered_map<b2Body*,  LineSegment, TemplateHasher<b2Body*>> m_b2BodiesToIntersections;
 
 };
 

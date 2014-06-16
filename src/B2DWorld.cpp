@@ -93,7 +93,7 @@ void B2DWorld::clearIntersects(){
 m_raycastCallback.clearIntersects();
 }
 
-std::unordered_map<b2Body*,  IntersectPoints, TemplateHasher<b2Body*>> B2DWorld::getBodiesToIntersectPoints(){
+std::unordered_map<b2Body*,  IntersectionLineSegment, TemplateHasher<b2Body*>> B2DWorld::getBodiesToIntersectPoints(){
    return  m_raycastCallback.getBodiesToIntersectPoints();
 }
 

@@ -124,7 +124,7 @@ int main()
 
 
         box2DWorld.update(deltaClock.restart().asSeconds());
-        std::unordered_map<b2Body*,  IntersectPoints, TemplateHasher<b2Body*>> bodiesToIntersects = box2DWorld.getBodiesToIntersectPoints();
+        std::unordered_map<b2Body*,  IntersectionLineSegment, TemplateHasher<b2Body*>> bodiesToIntersects = box2DWorld.getBodiesToIntersectPoints();
         int count = 0;
         std::vector<b2Body*> bodiesToDelete;
         if(bodiesToIntersects.size() > 0)
@@ -170,8 +170,8 @@ int main()
                     sf::Vector2f c  = it->second.getCenter();
 
                     b2Vec2 center(c.x/Box2DConstants::WORLD_SCALE,c.y/Box2DConstants::WORLD_SCALE);
-                    std::sort(shapePoint1.begin(), shapePoint1.end(), IntersectComp(center ));
-                    std::sort(shapePoint2.begin(), shapePoint2.end(), IntersectComp(center ));
+                    std::sort(shapePoint1.begin(), shapePoint1.end(), CCWComparator(center ));
+                    std::sort(shapePoint2.begin(), shapePoint2.end(), CCWComparator(center ));
 
                     B2BoxBuilder builder = getBox2dBuilder(shapePoint1, body);
                     b2Body* b = box2DWorld.createB2Body(&builder);
