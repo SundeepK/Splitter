@@ -55,15 +55,16 @@ int main()
     B2BoxBuilder builder(50,50);
     builder
     .bodyType(b2_dynamicBody)
-    .setPosition(b2Vec2(50,600))
+    .setPosition(b2Vec2(50,10))
     .setDensity(1.0f);
     b2Body* b = box2DWorld.createB2Body(&builder);
     b->ApplyLinearImpulse( b2Vec2(0.1f,0.1f), b->GetWorldCenter(), true);
+    b->ApplyTorque(500,true);
 
     B2BoxBuilder secondndbox(50,50);
     secondndbox
     .bodyType(b2_dynamicBody)
-    .setPosition(b2Vec2(120,600))
+    .setPosition(b2Vec2(120,10))
     .setDensity(1.0f);
     b2Body* b2 = box2DWorld.createB2Body(&secondndbox);
     b2->ApplyLinearImpulse( b2Vec2(0.1f,0.1f), b->GetWorldCenter(), true);
@@ -142,10 +143,6 @@ int main()
                     std::vector<b2Vec2> shapePoint1;
                     std::vector<b2Vec2> shapePoint2;
 
-//                shapePoint1.push_back(it->second.entryPoint);
-//                shapePoint1.push_back(it->second.exitPoint);
-//                shapePoint2.push_back(it->second.entryPoint);
-//                shapePoint2.push_back(it->second.exitPoint);
                     b2Vec2 entry(it->second.entryPoint.x/Box2DConstants::WORLD_SCALE, it->second.entryPoint.y/Box2DConstants::WORLD_SCALE);
                     b2Vec2 exit(it->second.exitPoint.x/Box2DConstants::WORLD_SCALE, it->second.exitPoint.y/Box2DConstants::WORLD_SCALE);
 
@@ -162,27 +159,19 @@ int main()
 
                         if(determinant > 0)
                         {
-//                        shapePoint1.push_back(sf::Vector2f(vec.x, vec.y));
                             shapePoint1.push_back(vec);
                         }
                         else
                         {
-//                        shapePoint2.push_back(sf::Vector2f(vec.x, vec.y));
                             shapePoint2.push_back(vec);
                         }
                     }
 
-//                for (sf::Vector2f point : shapePoint1){
-//                     drawCircle(App,point, sf::Color::Blue);
-//                }
-
-//                for (sf::Vector2f point : shapePoint2){
-//                     drawCircle(App,point, sf::Color::Red);
-//                }
                     sf::Vector2f c  = it->second.getCenter();
+
                     b2Vec2 center(c.x/Box2DConstants::WORLD_SCALE,c.y/Box2DConstants::WORLD_SCALE);
-               std::sort(shapePoint1.begin(), shapePoint1.end(), IntersectComp(center ));
-               std::sort(shapePoint2.begin(), shapePoint2.end(), IntersectComp(center ));
+                    std::sort(shapePoint1.begin(), shapePoint1.end(), IntersectComp(center ));
+                    std::sort(shapePoint2.begin(), shapePoint2.end(), IntersectComp(center ));
 
                     B2BoxBuilder builder = getBox2dBuilder(shapePoint1, body);
                     b2Body* b = box2DWorld.createB2Body(&builder);
