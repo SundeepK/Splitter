@@ -44,6 +44,9 @@ b2Body* B2DWorld::createB2Body(B2Builder* builder){
 //
 //}
 
+ void B2DWorld::registerBodySplitCallback(std::function<void(std::vector<B2BoxBuilder> splitBodies, b2Body* body)> callback){
+    m_raycastCallback.registerBodySplitCallback(callback);
+ }
 
 
 void B2DWorld::step(float dt){
