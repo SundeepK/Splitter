@@ -30,12 +30,7 @@ public:
     b2Body* createB2Body(B2Builder* builder);
     void setDebugDraw(SFMLB2dDebugDraw& box2dDEbugDrawer);
     void rayCast(const sf::Vector2f& point1, const sf::Vector2f& point2)  ;
-    std::vector<sf::Vector2f> getIntersections();
-    void clearIntersects();
-    std::unordered_map<b2Body*,  IntersectionLineSegment, TemplateHasher<b2Body*>> getBodiesToIntersectPoints();
     void deleteBody(b2Body* body);
-
-
 
 protected:
 private:

@@ -85,19 +85,6 @@ void B2DWorld::rayCast(const sf::Vector2f& point1, const sf::Vector2f& point2) {
     b2Vec2(point2.x/Box2DConstants::WORLD_SCALE, point2.y/Box2DConstants::WORLD_SCALE));
 }
 
-std::vector<sf::Vector2f> B2DWorld::getIntersections(){
-  return  m_raycastCallback.getIntersections();
-}
-
-void B2DWorld::clearIntersects(){
-m_raycastCallback.clearIntersects();
-}
-
-std::unordered_map<b2Body*,  IntersectionLineSegment, TemplateHasher<b2Body*>> B2DWorld::getBodiesToIntersectPoints(){
-   return  m_raycastCallback.getBodiesToIntersectPoints();
-}
-
-
 
 void B2DWorld::assertAccumilation(){
 	assert (
@@ -105,9 +92,6 @@ void B2DWorld::assertAccumilation(){
 		m_fixedTimestepAccumulator < FIXED_TIMESTEP + FLT_EPSILON
 	);
 }
-
-
-
 
 void B2DWorld::resetStates(){
 

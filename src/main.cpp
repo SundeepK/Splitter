@@ -111,8 +111,6 @@ int main()
             {
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    box2DWorld.clearIntersects();
-
                     sliceLine[1].position = (sf::Vector2f(event.mouseButton.x, event.mouseButton.y));
                     sliceLine[1].color =     sf::Color::Red;
                     isleftPressed = false;
@@ -124,75 +122,13 @@ int main()
 
 
         box2DWorld.update(deltaClock.restart().asSeconds());
-        std::unordered_map<b2Body*,  IntersectionLineSegment, TemplateHasher<b2Body*>> bodiesToIntersects = box2DWorld.getBodiesToIntersectPoints();
-        int count = 0;
-        std::vector<b2Body*> bodiesToDelete;
-        if(bodiesToIntersects.size() > 0)
-        {
-            for(auto it = bodiesToIntersects.begin(); it != bodiesToIntersects.end(); ++it)
-            {
-                b2Body* body = it->first;
 
-                if(body != NULL)
-                {
-
-                    b2PolygonShape* shape =((b2PolygonShape*)body->GetFixtureList()->GetShape());
-
-                    //all angles in radians
-
-                    std::vector<b2Vec2> shapePoint1;
-                    std::vector<b2Vec2> shapePoint2;
-
-                    b2Vec2 entry(it->second.entryPoint.x/Box2DConstants::WORLD_SCALE, it->second.entryPoint.y/Box2DConstants::WORLD_SCALE);
-                    b2Vec2 exit(it->second.exitPoint.x/Box2DConstants::WORLD_SCALE, it->second.exitPoint.y/Box2DConstants::WORLD_SCALE);
-
-                    shapePoint1.push_back(entry);
-                    shapePoint1.push_back(exit);
-                    shapePoint2.push_back(entry);
-                    shapePoint2.push_back(exit);
-
-                    for(int vertextIndex = 0; vertextIndex < shape->GetVertexCount(); vertextIndex++)
-                    {
-                        b2Vec2 vec = body->GetWorldPoint(shape->GetVertex(vertextIndex));
-
-                        int determinant =  isCCW(it->second.entryPoint, it->second.exitPoint, sf::Vector2f(vec.x *Box2DConstants::WORLD_SCALE, vec.y *Box2DConstants::WORLD_SCALE));
-
-                        if(determinant > 0)
-                        {
-                            shapePoint1.push_back(vec);
-                        }
-                        else
-                        {
-                            shapePoint2.push_back(vec);
-                        }
-                    }
-
-                    sf::Vector2f c  = it->second.getCenter();
-
-                    b2Vec2 center(c.x/Box2DConstants::WORLD_SCALE,c.y/Box2DConstants::WORLD_SCALE);
-                    std::sort(shapePoint1.begin(), shapePoint1.end(), CCWComparator(center ));
-                    std::sort(shapePoint2.begin(), shapePoint2.end(), CCWComparator(center ));
-
-                    B2BoxBuilder builder = getBox2dBuilder(shapePoint1, body);
-                    b2Body* b = box2DWorld.createB2Body(&builder);
-
-                    B2BoxBuilder builder2 = getBox2dBuilder(shapePoint2, body);
-                    b2Body* b2 = box2DWorld.createB2Body(&builder2);
-
-                    drawCircle(App,it->second.getCenter(), sf::Color::White);
-
-                    bodiesToDelete.push_back(body);
-                }
-
-            }
-        }
-
-        for (b2Body* body : bodiesToDelete)
-        {
-            box2DWorld.clearIntersects();
-            bodiesToIntersects.erase(body);
-            box2DWorld.deleteBody(body);
-        }
+//        for (b2Body* body : bodiesToDelete)
+//        {
+//            box2DWorld.clearIntersects();
+//            bodiesToIntersects.erase(body);
+//            box2DWorld.deleteBody(body);
+//        }
 
 
         App.draw(sliceLine);

@@ -9,6 +9,8 @@
 #include <SFML/Window.hpp>
 #include <unordered_map>
 #include "TemplateHasher.h"
+#include "B2BodySplitCallback.h"
+#include "B2BoxBuilder.h"
 
 struct CCWComparator : std::binary_function<b2Vec2, b2Vec2, bool>
 {
@@ -47,18 +49,20 @@ struct IntersectComp2 : std::binary_function<b2Vec2, b2Vec2, bool>
 };
 
 
+enum PointsDirection{
+   CCW,
+   CW,
+   COLLINEAR
+};
 
 class Splitter : public b2RayCastCallback
 {
 public:
+
         Splitter();
         virtual ~Splitter();
         float32 ReportFixture(	b2Fixture* fixture, const b2Vec2& point,const b2Vec2& normal, float32 fraction);
-        void clearPoints();
-        void clearIntersects();
 
-        std::vector<sf::Vector2f> getIntersections();
-        std::unordered_map<b2Body*,  LineSegment, TemplateHasher<b2Body*>> getBodiesToIntersectPoints();
     protected:
     private:
 
@@ -75,15 +79,16 @@ public:
 
         };
 
-        enum PointsDirection{
-            CCW,
-            CW,
-            COLLINEAR
-        };
 
 
-        void splitBox2dBody(b2Body body*, LineSegment intersectionLine);
-        PointsDirection isCCW(sf::Vector2f p1, sf::Vector2f p2, sf::Vector2f p3);
+        PointsDirection isCCW(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3);
+        void splitBox2dBody(b2Body* body, LineSegment intersectionLine);
+        void processIntersection(b2Body* body, const b2Vec2& point);
+        void splitBody(b2Body* body, const b2Vec2& point);
+        void addBody(b2Body* body, const b2Vec2& point);
+        std::vector<B2BoxBuilder> getSplitBodies(b2Body* body, std::vector<b2Vec2>& cwPoints,  std::vector<b2Vec2>& ccwPoints);
+        void splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, LineSegment intersectionLine, std::vector<b2Vec2>& cwPoints,  std::vector<b2Vec2>& ccwPoints);
+        B2BoxBuilder getBox2dBuilder(std::vector<b2Vec2> points, b2Body* body);
 
 
         std::vector<sf::Vector2f> m_intersectionPoints;
