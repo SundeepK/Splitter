@@ -79,7 +79,13 @@ int main()
 
     sf::Clock deltaClock;
 
+    box2DWorld.registerBodySplitCallback([&box2DWorld](std::vector<B2BoxBuilder> splitBodies, b2Body* body) -> void {
 
+        for(auto builder : splitBodies){
+           box2DWorld.createB2Body(&builder);
+        }
+        box2DWorld.deleteBody(body);
+    });
 
     while (App.isOpen())
     {
