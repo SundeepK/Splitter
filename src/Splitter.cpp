@@ -43,14 +43,14 @@ void Splitter::processIntersection(b2Body* body, const b2Vec2& point){
 }
 
 void Splitter::splitBody(b2Body* body, const b2Vec2 point){
-    m_b2BodiesToIntersections[body].exitPoint = point;
+    m_b2BodiesToIntersections[body].exitPoint = b2Vec2(point.x*Box2DConstants::WORLD_SCALE, point.y*Box2DConstants::WORLD_SCALE);
     splitBox2dBody(body,  m_b2BodiesToIntersections[body]);
     m_b2BodiesToIntersections.erase(body);
 }
 
 void Splitter::addBody(b2Body* body, const b2Vec2 point){
     LineSegment intersectP;
-    intersectP.entryPoint = point;
+    intersectP.entryPoint = b2Vec2(point.x*Box2DConstants::WORLD_SCALE, point.y*Box2DConstants::WORLD_SCALE);
     m_b2BodiesToIntersections[body] =  intersectP;
 }
 
@@ -59,11 +59,15 @@ void Splitter::splitBox2dBody(b2Body* body, LineSegment intersectionLine)
     std::vector<b2Vec2> cwPoints;
     std::vector<b2Vec2> ccwPoints;
 
-    cwPoints.push_back(intersectionLine.entryPoint);
-    cwPoints.push_back(intersectionLine.exitPoint);
+     b2Vec2 entry(intersectionLine.entryPoint.x/Box2DConstants::WORLD_SCALE, intersectionLine.entryPoint.y/Box2DConstants::WORLD_SCALE);
+     b2Vec2 exit(intersectionLine.exitPoint.x/Box2DConstants::WORLD_SCALE, intersectionLine.exitPoint.y/Box2DConstants::WORLD_SCALE);
 
-    ccwPoints.push_back(intersectionLine.entryPoint);
-    ccwPoints.push_back(intersectionLine.exitPoint);
+
+    cwPoints.push_back(entry);
+    cwPoints.push_back(exit);
+
+    ccwPoints.push_back(entry);
+    ccwPoints.push_back(exit);
 
     splitBodyByClockWiseOrCounterClockWiseDirection(body, intersectionLine, cwPoints, ccwPoints);
 
@@ -89,7 +93,7 @@ void Splitter::splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, Lin
     for(int vertextIndex = 0; vertextIndex < shape->GetVertexCount(); vertextIndex++)
     {
         b2Vec2 vec = body->GetWorldPoint(shape->GetVertex(vertextIndex));
-        int direction =  isCCW(intersectionLine.entryPoint, intersectionLine.exitPoint, vec);
+        int direction =  isCCW(intersectionLine.entryPoint, intersectionLine.exitPoint, b2Vec2(vec.x*Box2DConstants::WORLD_SCALE, vec.y*Box2DConstants::WORLD_SCALE));
         if(direction  > 0){
             cwPoints.push_back(vec);
         }else{
