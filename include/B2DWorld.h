@@ -32,6 +32,8 @@ public:
     void rayCast(const sf::Vector2f& point1, const sf::Vector2f& point2)  ;
     void deleteBody(b2Body* body);
     void registerBodySplitCallback(std::function<void(std::vector<B2BoxBuilder> splitBodies, b2Body* body)> callback );
+    void clearIntersects();
+
 
 protected:
 private:

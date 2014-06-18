@@ -117,6 +117,10 @@ void B2DWorld::deleteBody(b2Body* body){
 }
 
 
+void B2DWorld::clearIntersects()
+{
+    m_raycastCallback.clearIntersects();
+}
 
 
 

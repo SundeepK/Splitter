@@ -117,6 +117,7 @@ int main()
             {
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
+                    box2DWorld.clearIntersects();
                     sliceLine[1].position = (sf::Vector2f(event.mouseButton.x, event.mouseButton.y));
                     sliceLine[1].color =     sf::Color::Red;
                     isleftPressed = false;

@@ -44,6 +44,7 @@ public:
         float32 ReportFixture(	b2Fixture* fixture, const b2Vec2& point,const b2Vec2& normal, float32 fraction);
         void registerBodySplitCallback(B2BodySplitCallback& callback);
         void registerBodySplitCallback(std::function<void(std::vector<B2BoxBuilder> splitBodies, b2Body* body)> callback );
+        void clearIntersects();
 
     protected:
     private:
@@ -61,14 +62,18 @@ public:
 
         };
 
-        PointsDirection isCCW(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3);
+//        PointsDirection isCCW(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3);
+        int isCCW(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3);
+
         void splitBox2dBody(b2Body* body, LineSegment intersectionLine);
         void processIntersection(b2Body* body, const b2Vec2& point);
-        void splitBody(b2Body* body, const b2Vec2& point);
-        void addBody(b2Body* body, const b2Vec2& point);
+        void splitBody(b2Body* body, const b2Vec2 point);
+        void addBody(b2Body* body, const b2Vec2 point);
         std::vector<B2BoxBuilder> getSplitBodies(b2Body* body, std::vector<b2Vec2>& cwPoints,  std::vector<b2Vec2>& ccwPoints);
         void splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, LineSegment intersectionLine, std::vector<b2Vec2>& cwPoints,  std::vector<b2Vec2>& ccwPoints);
         B2BoxBuilder getBox2dBuilder(std::vector<b2Vec2> points, b2Body* body);
+
+
 
         std::unordered_map<b2Body*,  LineSegment, TemplateHasher<b2Body*>> m_b2BodiesToIntersections;
         std::vector<B2BodySplitCallback> m_callbacks;
