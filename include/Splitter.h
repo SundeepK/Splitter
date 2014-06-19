@@ -50,22 +50,16 @@ public:
     protected:
     private:
 
-        struct LineSegment
-        {
+        struct LineSegment{
             public:
                 Vec entryPoint;
                 Vec exitPoint;
-
-                Vec getCenter()
-                {
+                Vec getCenter(){
                     return Vec((entryPoint.x  + exitPoint.x)/2, (entryPoint.y  + exitPoint.y)/2);
                 }
-
         };
 
-//        PointsDirection isCCW(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3);
-        int isCCW(Vec p1, Vec p2, Vec p3);
-
+        PointsDirection isCCW(Vec p1, Vec p2, Vec p3);
         void splitBox2dBody(b2Body* body, LineSegment intersectionLine);
         void processIntersection(b2Body* body, const b2Vec2& point);
         void splitBody(b2Body* body, const b2Vec2 point);
@@ -73,8 +67,6 @@ public:
         std::vector<B2BoxBuilder> getSplitBodies(b2Body* body, std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints);
         void splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, LineSegment intersectionLine, std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints);
         B2BoxBuilder getBox2dBuilder(std::vector<Vec> points, b2Body* body);
-
-
 
         std::unordered_map<b2Body*,  LineSegment, TemplateHasher<b2Body*>> m_b2BodiesToIntersections;
         std::vector<B2BodySplitCallback> m_callbacks;

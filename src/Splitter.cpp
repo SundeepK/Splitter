@@ -12,20 +12,13 @@ void Splitter::registerBodySplitCallback(std::function<void(std::vector<B2BoxBui
     m_functionCallbacks.push_back(callback);
 }
 
-
-//PointsDirection Splitter::isCCW(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3)
-//{
-//
-//    int direction = p1.x*p2.y+p2.x*p3.y+p3.x*p1.y-p1.y*p2.x-p2.y*p3.x-p3.y*p1.x;
-//    if(direction > 0) return PointsDirection::CW;
-//    if(direction < 0) return PointsDirection::CCW;
-//    return PointsDirection::COLLINEAR;
-//}
-
-int Splitter::isCCW(Vec p1, Vec p2, Vec p3)
+PointsDirection Splitter::isCCW(Vec p1, Vec p2, Vec p3)
 {
 
-   return p1.x*p2.y+p2.x*p3.y+p3.x*p1.y-p1.y*p2.x-p2.y*p3.x-p3.y*p1.x;
+    int direction = p1.x*p2.y+p2.x*p3.y+p3.x*p1.y-p1.y*p2.x-p2.y*p3.x-p3.y*p1.x;
+    if(direction > 0) return PointsDirection::CW;
+    if(direction < 0) return PointsDirection::CCW;
+    return PointsDirection::COLLINEAR;
 }
 
 float32 Splitter::ReportFixture(b2Fixture* fixture, const b2Vec2& point,const b2Vec2& normal, float32 fraction)
@@ -94,8 +87,8 @@ void Splitter::splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, Lin
     for(int vertextIndex = 0; vertextIndex < shape->GetVertexCount(); vertextIndex++)
     {
         Vec vec = body->GetWorldPoint(shape->GetVertex(vertextIndex));
-        int direction =  isCCW(intersectionLine.entryPoint, intersectionLine.exitPoint, vec.mToPix());
-        if(direction  > 0){
+        PointsDirection direction =  isCCW(intersectionLine.entryPoint, intersectionLine.exitPoint, vec.mToPix());
+        if(direction == CW){
             cwPoints.push_back(vec);
         }else{
             ccwPoints.push_back(vec);
