@@ -22,7 +22,7 @@ void Splitter::registerBodySplitCallback(std::function<void(std::vector<B2BoxBui
 //    return PointsDirection::COLLINEAR;
 //}
 
-int Splitter::isCCW(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3)
+int Splitter::isCCW(Vec p1, Vec p2, Vec p3)
 {
 
    return p1.x*p2.y+p2.x*p3.y+p3.x*p1.y-p1.y*p2.x-p2.y*p3.x-p3.y*p1.x;
@@ -43,35 +43,36 @@ void Splitter::processIntersection(b2Body* body, const b2Vec2& point){
 }
 
 void Splitter::splitBody(b2Body* body, const b2Vec2 point){
-    m_b2BodiesToIntersections[body].exitPoint = b2Vec2(point.x*Box2DConstants::WORLD_SCALE, point.y*Box2DConstants::WORLD_SCALE);
+    Vec v = point;
+    m_b2BodiesToIntersections[body].exitPoint = v.mToPix();
     splitBox2dBody(body,  m_b2BodiesToIntersections[body]);
     m_b2BodiesToIntersections.erase(body);
 }
 
 void Splitter::addBody(b2Body* body, const b2Vec2 point){
+    Vec v = point;
     LineSegment intersectP;
-    intersectP.entryPoint = b2Vec2(point.x*Box2DConstants::WORLD_SCALE, point.y*Box2DConstants::WORLD_SCALE);
+    intersectP.entryPoint = v.mToPix();
     m_b2BodiesToIntersections[body] =  intersectP;
 }
 
 void Splitter::splitBox2dBody(b2Body* body, LineSegment intersectionLine)
 {
-    std::vector<b2Vec2> cwPoints;
-    std::vector<b2Vec2> ccwPoints;
+    std::vector<Vec> cwPoints;
+    std::vector<Vec> ccwPoints;
 
-     b2Vec2 entry(intersectionLine.entryPoint.x/Box2DConstants::WORLD_SCALE, intersectionLine.entryPoint.y/Box2DConstants::WORLD_SCALE);
-     b2Vec2 exit(intersectionLine.exitPoint.x/Box2DConstants::WORLD_SCALE, intersectionLine.exitPoint.y/Box2DConstants::WORLD_SCALE);
+    Vec entry = intersectionLine.entryPoint;
+    Vec exit = intersectionLine.exitPoint;
 
+    cwPoints.push_back(entry.pixToM());
+    cwPoints.push_back(exit.pixToM());
 
-    cwPoints.push_back(entry);
-    cwPoints.push_back(exit);
-
-    ccwPoints.push_back(entry);
-    ccwPoints.push_back(exit);
+    ccwPoints.push_back(entry.pixToM());
+    ccwPoints.push_back(exit.pixToM());
 
     splitBodyByClockWiseOrCounterClockWiseDirection(body, intersectionLine, cwPoints, ccwPoints);
 
-    b2Vec2 center  = intersectionLine.getCenter();
+    Vec center  = intersectionLine.getCenter();
     std::sort(cwPoints.begin(), cwPoints.end(), CCWComparator(center));
     std::sort(ccwPoints.begin(), ccwPoints.end(), CCWComparator(center));
 
@@ -81,19 +82,19 @@ void Splitter::splitBox2dBody(b2Body* body, LineSegment intersectionLine)
         fn(builders, body);
 }
 
-std::vector<B2BoxBuilder> Splitter::getSplitBodies(b2Body* body, std::vector<b2Vec2>& cwPoints,  std::vector<b2Vec2>& ccwPoints){
+std::vector<B2BoxBuilder> Splitter::getSplitBodies(b2Body* body, std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints){
     std::vector<B2BoxBuilder> builders;
     builders.push_back(getBox2dBuilder(cwPoints, body));
     builders.push_back(getBox2dBuilder(ccwPoints, body));
     return builders;
 }
 
-void Splitter::splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, LineSegment intersectionLine, std::vector<b2Vec2>& cwPoints,  std::vector<b2Vec2>& ccwPoints){
+void Splitter::splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, LineSegment intersectionLine, std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints){
     b2PolygonShape* shape =((b2PolygonShape*)body->GetFixtureList()->GetShape());
     for(int vertextIndex = 0; vertextIndex < shape->GetVertexCount(); vertextIndex++)
     {
-        b2Vec2 vec = body->GetWorldPoint(shape->GetVertex(vertextIndex));
-        int direction =  isCCW(intersectionLine.entryPoint, intersectionLine.exitPoint, b2Vec2(vec.x*Box2DConstants::WORLD_SCALE, vec.y*Box2DConstants::WORLD_SCALE));
+        Vec vec = body->GetWorldPoint(shape->GetVertex(vertextIndex));
+        int direction =  isCCW(intersectionLine.entryPoint, intersectionLine.exitPoint, vec.mToPix());
         if(direction  > 0){
             cwPoints.push_back(vec);
         }else{
@@ -108,9 +109,13 @@ void Splitter::clearIntersects()
 }
 
 
-B2BoxBuilder Splitter::getBox2dBuilder(std::vector<b2Vec2> points, b2Body* body)
+B2BoxBuilder Splitter::getBox2dBuilder(std::vector<Vec> points, b2Body* body)
 {
-    B2BoxBuilder builder(points, body);
+    std::vector<b2Vec2> vecs;
+    for(Vec v : points){
+        vecs.push_back(v.toB2v());
+    }
+    B2BoxBuilder builder(vecs, body);
     return builder;
 }
 

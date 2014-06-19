@@ -11,14 +11,15 @@
 #include "TemplateHasher.h"
 #include "B2BodySplitCallback.h"
 #include "B2BoxBuilder.h"
+#include "Vec.h"
 
-struct CCWComparator : std::binary_function<b2Vec2, b2Vec2, bool>
+struct CCWComparator : std::binary_function<Vec, Vec, bool>
 {
     //Polar coordinate system
     //sorting angles in counter-clockwise
-    b2Vec2 M;
-    CCWComparator(b2Vec2 v) : M(v) {}
-    bool operator() ( b2Vec2 o1,  b2Vec2 o2){
+    Vec M;
+    CCWComparator(Vec v) : M(v) {}
+    bool operator() ( Vec o1,  Vec o2){
 
         float ang1     = atan( ((o1.y - M.y)/(o1.x - M.x) ) * M_PI / 180);
         float ang2     = atan( (o2.y - M.y)/(o2.x - M.x) * M_PI / 180);
@@ -52,26 +53,26 @@ public:
         struct LineSegment
         {
             public:
-                b2Vec2 entryPoint;
-                b2Vec2 exitPoint;
+                Vec entryPoint;
+                Vec exitPoint;
 
-                b2Vec2 getCenter()
+                Vec getCenter()
                 {
-                    return b2Vec2((entryPoint.x  + exitPoint.x)/2, (entryPoint.y  + exitPoint.y)/2);
+                    return Vec((entryPoint.x  + exitPoint.x)/2, (entryPoint.y  + exitPoint.y)/2);
                 }
 
         };
 
 //        PointsDirection isCCW(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3);
-        int isCCW(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3);
+        int isCCW(Vec p1, Vec p2, Vec p3);
 
         void splitBox2dBody(b2Body* body, LineSegment intersectionLine);
         void processIntersection(b2Body* body, const b2Vec2& point);
         void splitBody(b2Body* body, const b2Vec2 point);
         void addBody(b2Body* body, const b2Vec2 point);
-        std::vector<B2BoxBuilder> getSplitBodies(b2Body* body, std::vector<b2Vec2>& cwPoints,  std::vector<b2Vec2>& ccwPoints);
-        void splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, LineSegment intersectionLine, std::vector<b2Vec2>& cwPoints,  std::vector<b2Vec2>& ccwPoints);
-        B2BoxBuilder getBox2dBuilder(std::vector<b2Vec2> points, b2Body* body);
+        std::vector<B2BoxBuilder> getSplitBodies(b2Body* body, std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints);
+        void splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, LineSegment intersectionLine, std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints);
+        B2BoxBuilder getBox2dBuilder(std::vector<Vec> points, b2Body* body);
 
 
 
