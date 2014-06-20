@@ -43,7 +43,7 @@ public:
         Splitter();
         virtual ~Splitter();
         float32 ReportFixture(	b2Fixture* fixture, const b2Vec2& point,const b2Vec2& normal, float32 fraction);
-        void registerBodySplitCallback(B2BodySplitCallback& callback);
+        void registerBodySplitCallback(B2BodySplitCallback* callback);
         void registerBodySplitCallback(std::function<void(std::vector<B2BoxBuilder> splitBodies, b2Body* body)> callback );
         void clearIntersects();
 
@@ -67,10 +67,11 @@ public:
         std::vector<B2BoxBuilder> getSplitBodies(b2Body* body, std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints);
         void splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, LineSegment intersectionLine, std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints);
         B2BoxBuilder getBox2dBuilder(std::vector<Vec> points, b2Body* body);
+        void callbackHooks(std::vector<B2BoxBuilder>& builders, b2Body* body);
 
         std::unordered_map<b2Body*,  LineSegment, TemplateHasher<b2Body*>> m_b2BodiesToIntersections;
-        std::vector<B2BodySplitCallback> m_callbacks;
-        std::vector<std::function<void(std::vector<B2BoxBuilder> splitBodies, b2Body* body)>> m_functionCallbacks;
+        std::vector<B2BodySplitCallback*> m_callbacks;
+        std::vector<std::function<void(std::vector<B2BoxBuilder>& splitBodies, b2Body* body)>> m_functionCallbacks;
 };
 
 #endif // RAYCASTCALLBACK_H

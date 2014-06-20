@@ -70,9 +70,15 @@ void Splitter::splitBox2dBody(b2Body* body, LineSegment intersectionLine)
     std::sort(ccwPoints.begin(), ccwPoints.end(), CCWComparator(center));
 
     std::vector<B2BoxBuilder> builders = getSplitBodies(body,cwPoints,ccwPoints);
+    callbackHooks(builders, body);
+}
 
+void Splitter::callbackHooks(std::vector<B2BoxBuilder>& builders, b2Body* body){
     for(auto fn : m_functionCallbacks)
         fn(builders, body);
+
+    for(auto* callback : m_callbacks)
+        callback->onb2BodySplit(builders, body);
 }
 
 std::vector<B2BoxBuilder> Splitter::getSplitBodies(b2Body* body, std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints){

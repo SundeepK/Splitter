@@ -61,6 +61,21 @@ int main()
     b->ApplyLinearImpulse( b2Vec2(0.1f,0.1f), b->GetWorldCenter(), true);
     b->ApplyTorque(500,true);
 
+    std::vector<b2Vec2> sides;
+
+    sides.push_back (b2Vec2(-1.5,-0.5));
+    sides.push_back (b2Vec2(0.5,-1));
+    sides.push_back(b2Vec2(1,-0.5));
+    sides.push_back(b2Vec2(1,1.5));
+    sides.push_back(b2Vec2(0.5,1.5));
+    sides.push_back(b2Vec2(-0.5,1.3));
+
+
+    B2BoxBuilder eightSides(sides ,b);
+    eightSides.setPosition(b2Vec2(100,100));
+    b2Body* b3 = box2DWorld.createB2Body(&eightSides);
+
+
     B2BoxBuilder secondndbox(50,50);
     secondndbox
     .bodyType(b2_dynamicBody)
@@ -79,10 +94,12 @@ int main()
 
     sf::Clock deltaClock;
 
-    box2DWorld.registerBodySplitCallback([&box2DWorld](std::vector<B2BoxBuilder> splitBodies, b2Body* body) -> void {
+    box2DWorld.registerBodySplitCallback([&box2DWorld](std::vector<B2BoxBuilder> splitBodies, b2Body* body) -> void
+    {
 
-        for(auto builder : splitBodies){
-           box2DWorld.createB2Body(&builder);
+        for(auto builder : splitBodies)
+        {
+            box2DWorld.createB2Body(&builder);
         }
         box2DWorld.deleteBody(body);
     });
@@ -129,14 +146,6 @@ int main()
 
 
         box2DWorld.update(deltaClock.restart().asSeconds());
-
-//        for (b2Body* body : bodiesToDelete)
-//        {
-//            box2DWorld.clearIntersects();
-//            bodiesToIntersects.erase(body);
-//            box2DWorld.deleteBody(body);
-//        }
-
 
         App.draw(sliceLine);
         App.display();
