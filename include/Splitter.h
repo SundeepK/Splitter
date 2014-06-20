@@ -65,9 +65,13 @@ public:
         void splitBody(b2Body* body, const b2Vec2 point);
         void addBody(b2Body* body, const b2Vec2 point);
         std::vector<B2BoxBuilder> getSplitBodies(b2Body* body, std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints);
-        void splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, LineSegment intersectionLine, std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints);
+        bool splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, LineSegment intersectionLine, std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints);
         B2BoxBuilder getBox2dBuilder(std::vector<Vec> points, b2Body* body);
         void callbackHooks(std::vector<B2BoxBuilder>& builders, b2Body* body);
+        bool isValidSegment(const LineSegment& segment);
+        bool areValidPoints(std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints);
+        bool isValidSize(std::vector<Vec>& cwPoints);
+
 
         std::unordered_map<b2Body*,  LineSegment, TemplateHasher<b2Body*>> m_b2BodiesToIntersections;
         std::vector<B2BodySplitCallback*> m_callbacks;

@@ -29,16 +29,22 @@ float32 Splitter::ReportFixture(b2Fixture* fixture, const b2Vec2& point,const b2
 
 void Splitter::processIntersection(b2Body* body, const b2Vec2& point){
     if(m_b2BodiesToIntersections.find(body) != m_b2BodiesToIntersections.end()){
-        splitBody(body, point);
+           splitBody(body, point);
     }else{
         addBody(body, point);
     }
 }
 
+bool Splitter::isValidSegment(const LineSegment& segment){
+   return !(segment.entryPoint.x ==  segment.exitPoint.x && segment.entryPoint.y ==  segment.exitPoint.y);
+}
+
 void Splitter::splitBody(b2Body* body, const b2Vec2 point){
     Vec v = point;
     m_b2BodiesToIntersections[body].exitPoint = v.mToPix();
-    splitBox2dBody(body,  m_b2BodiesToIntersections[body]);
+    if(isValidSegment(m_b2BodiesToIntersections[body])){
+      splitBox2dBody(body,  m_b2BodiesToIntersections[body]);
+    }
     m_b2BodiesToIntersections.erase(body);
 }
 
@@ -63,15 +69,34 @@ void Splitter::splitBox2dBody(b2Body* body, LineSegment intersectionLine)
     ccwPoints.push_back(entry.pixToM());
     ccwPoints.push_back(exit.pixToM());
 
-    splitBodyByClockWiseOrCounterClockWiseDirection(body, intersectionLine, cwPoints, ccwPoints);
+    if(!splitBodyByClockWiseOrCounterClockWiseDirection(body, intersectionLine, cwPoints, ccwPoints)){
+        return ;
+    }
+
+     if(!areValidPoints(cwPoints,ccwPoints)){
+        return;
+     }
 
     Vec center  = intersectionLine.getCenter();
     std::sort(cwPoints.begin(), cwPoints.end(), CCWComparator(center));
     std::sort(ccwPoints.begin(), ccwPoints.end(), CCWComparator(center));
 
+
     std::vector<B2BoxBuilder> builders = getSplitBodies(body,cwPoints,ccwPoints);
     callbackHooks(builders, body);
 }
+
+
+
+
+bool Splitter::areValidPoints(std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints){
+    return  (isValidSize(cwPoints) &&  isValidSize(ccwPoints) );
+}
+
+bool Splitter::isValidSize(std::vector<Vec>& cwPoints){
+    return (cwPoints.size() >= 3 &&  cwPoints.size() <= 8 );
+}
+
 
 void Splitter::callbackHooks(std::vector<B2BoxBuilder>& builders, b2Body* body){
     for(auto fn : m_functionCallbacks)
@@ -88,18 +113,25 @@ std::vector<B2BoxBuilder> Splitter::getSplitBodies(b2Body* body, std::vector<Vec
     return builders;
 }
 
-void Splitter::splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, LineSegment intersectionLine, std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints){
+bool Splitter::splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, LineSegment intersectionLine, std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints){
     b2PolygonShape* shape =((b2PolygonShape*)body->GetFixtureList()->GetShape());
     for(int vertextIndex = 0; vertextIndex < shape->GetVertexCount(); vertextIndex++)
     {
         Vec vec = body->GetWorldPoint(shape->GetVertex(vertextIndex));
         PointsDirection direction =  isCCW(intersectionLine.entryPoint, intersectionLine.exitPoint, vec.mToPix());
+
+        if(direction == COLLINEAR){
+            return false;
+        }
+
         if(direction == CW){
             cwPoints.push_back(vec);
         }else{
             ccwPoints.push_back(vec);
         }
     }
+
+    return true;
 }
 
 void Splitter::clearIntersects()

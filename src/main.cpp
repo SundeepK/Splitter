@@ -138,8 +138,11 @@ int main()
                     sliceLine[1].position = (sf::Vector2f(event.mouseButton.x, event.mouseButton.y));
                     sliceLine[1].color =     sf::Color::Red;
                     isleftPressed = false;
-                    box2DWorld.rayCast(sliceLine[0].position, sliceLine[1].position);
-                    box2DWorld.rayCast(sliceLine[1].position, sliceLine[0].position);
+                    if( !(sliceLine[0].position == sliceLine[1].position)){
+                        box2DWorld.rayCast(sliceLine[0].position, sliceLine[1].position);
+                        box2DWorld.rayCast(sliceLine[1].position, sliceLine[0].position);
+                    }
+
                 }
             }
         }
