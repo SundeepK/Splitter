@@ -12,6 +12,7 @@
 #include "B2BodySplitCallback.h"
 #include "B2BoxBuilder.h"
 #include "Vec.h"
+#include <algorithm>
 
 struct CCWComparator : std::binary_function<Vec, Vec, bool>
 {
@@ -25,6 +26,39 @@ struct CCWComparator : std::binary_function<Vec, Vec, bool>
         float ang2     = atan( (o2.y - M.y)/(o2.x - M.x) * M_PI / 180);
         if(ang1 < ang2) return true;
         else if (ang1 > ang2) return false;
+
+        return true;
+    }
+};
+
+struct Comparator2 : std::binary_function<Vec, Vec, int>
+{
+    int operator() ( Vec va,  Vec vb){
+        if (va.x > vb.x)
+        {
+            return 1;
+        }
+        else if (va.x < vb.x)
+        {
+            return -1;
+        }
+
+        return 0;
+    }
+};
+
+
+struct Comparator : std::binary_function<Vec, Vec, bool>
+{
+    bool operator() ( Vec va,  Vec vb){
+        if (va.x > vb.x)
+        {
+            return true;
+        }
+        else if (va.x < vb.x)
+        {
+            return false;
+        }
 
         return true;
     }
@@ -71,7 +105,10 @@ public:
         bool isValidSegment(const LineSegment& segment);
         bool areValidPoints(std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints);
         bool isValidSize(std::vector<Vec>& cwPoints);
-
+        bool ComputeCentroid(std::vector<Vec>& vs);
+        bool areVecsValid( std::vector<Vec>& points);
+        bool areVecPointLengthsValid( std::vector<Vec>& points);
+        std::vector<Vec> arrangeVertices(std::vector<Vec> vertices);
 
         std::unordered_map<b2Body*,  LineSegment, TemplateHasher<b2Body*>> m_b2BodiesToIntersections;
         std::vector<B2BodySplitCallback*> m_callbacks;
