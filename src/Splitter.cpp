@@ -15,7 +15,6 @@ void Splitter::registerBodySplitCallback(std::function<void(std::vector<B2BoxBui
 
 PointsDirection Splitter::isCCW(Vec p1, Vec p2, Vec p3)
 {
-
     int direction = p1.x*p2.y+p2.x*p3.y+p3.x*p1.y-p1.y*p2.x-p2.y*p3.x-p3.y*p1.x;
     if(direction > 0) return PointsDirection::CW;
     if(direction < 0) return PointsDirection::CCW;
@@ -84,44 +83,6 @@ std::vector<Vec> Splitter::sortVecs(std::vector<Vec> vertices)
     sortedVertices.insert(sortedVertices.begin() + ccwIndex, vertices[count-1]);
     sortedVertices.insert(sortedVertices.end(), endSorted.begin(), endSorted.end());
     return sortedVertices;
-}
-
-Vec getCentroid(std::vector<Vec>& vs)
-{
-    int count = vs.size();
-	b2Vec2 c; c.Set(0.0f, 0.0f);
-	float area = 0.0f;
-
-	// pRef is the reference point for forming triangles.
-	// It's location doesn't change the result (except for rounding error).
-	b2Vec2 pRef(0.0f, 0.0f);
-
-	const float inv3 = 1.0f / 3.0f;
-
-	for (int i = 0; i < count; ++i)
-	{
-		// Triangle vertices.
-		b2Vec2 p1 = pRef;
-		b2Vec2 p2 = vs[i].toB2v();
-		b2Vec2 p3 = i + 1 < count ? vs[i+1].toB2v() : vs[0].toB2v();
-
-		b2Vec2 e1 = p2 - p1;
-		b2Vec2 e2 = p3 - p1;
-
-		float D = b2Cross(e1, e2);
-
-		float triangleArea = 0.5f * D;
-		area += triangleArea;
-		c += triangleArea * inv3 * (p1 + p2 + p3);
-	}
-
-	// Centroid
-		c *= 1.0f / area;
-            std::cout << "center x: " << c.x << " center y: " << c.y << std::endl;
-            std::cout  << std::endl;
-
-	return Vec(c);
-
 }
 
 void Splitter::splitBox2dBody(b2Body* body, LineSegment intersectionLine)
@@ -211,7 +172,8 @@ bool Splitter::hasValidArea(std::vector<Vec>& points){
         area = area * -1;
     }
     area /=2;
-    return (area > b2_epsilon);
+
+    return (area > 0.0001f);
 }
 
 bool Splitter::areVecsValid(std::vector<Vec>& points){
@@ -219,13 +181,9 @@ bool Splitter::areVecsValid(std::vector<Vec>& points){
         return false;
     }
 
-     if(!hasValidArea(points)){
+    if(!hasValidArea(points)){
         return false;
      }
-
-//    if(!ComputeCentroid(points)){
-//        return false;
-//    }
 
      if(isDegenerate(points)){
         return false;
@@ -234,41 +192,6 @@ bool Splitter::areVecsValid(std::vector<Vec>& points){
     return true;
 
 }
-
-bool Splitter::ComputeCentroid(std::vector<Vec>& vs)
-{
-    int count = vs.size();
-	b2Vec2 c; c.Set(0.0f, 0.0f);
-	float area = 0.0f;
-
-	// pRef is the reference point for forming triangles.
-	// It's location doesn't change the result (except for rounding error).
-	b2Vec2 pRef(0.0f, 0.0f);
-
-	const float inv3 = 1.0f / 3.0f;
-
-	for (int i = 0; i < count; ++i)
-	{
-		// Triangle vertices.
-		b2Vec2 p1 = pRef;
-		b2Vec2 p2 = vs[i].toB2v();
-		b2Vec2 p3 = i + 1 < count ? vs[i+1].toB2v() : vs[0].toB2v();
-
-		b2Vec2 e1 = p2 - p1;
-		b2Vec2 e2 = p3 - p1;
-
-		float D = b2Cross(e1, e2);
-
-		float triangleArea = 0.5f * D;
-		area += triangleArea;
-	}
-
-	// Centroid
-	return (area > b2_epsilon);
-
-}
-
-
 
 bool Splitter::areVecPointLengthsValid( std::vector<Vec>& vertices){
     int count = vertices.size();
