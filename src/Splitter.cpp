@@ -1,5 +1,6 @@
 #include "Splitter.h"
 #include "Box2DConstants.h"
+#include <iostream>
 Splitter::Splitter()
 {
 }
@@ -55,43 +56,72 @@ void Splitter::addBody(b2Body* body, const b2Vec2 point){
     m_b2BodiesToIntersections[body] =  intersectP;
 }
 
-std::vector<Vec> Splitter::arrangeVertices(std::vector<Vec> vertices)
+std::vector<Vec> Splitter::sortVecs(std::vector<Vec> vertices)
 {
     int count = vertices.size();
-    int iCounterClockWise = 1;
-    int iClockWise = count ;
-    int i;
+    int ccwIndex = 1;
 
     Vec referencePointA,referencePointB;
-    std::vector<Vec> sortedVertices(count);
+    std::vector<Vec> sortedVertices;
     std::vector<Vec> endSorted;
 
-    //sort all vertices in ascending order according to their x-coordinate so you can get two points of a line
     std::sort(vertices.begin(), vertices.end(), Comparator());
-
     sortedVertices.push_back(vertices[0]);
-    referencePointA = vertices[0];          //leftmost point
-    referencePointB = vertices[count-1];    //rightmost point
+    referencePointA = vertices[0];
+    referencePointB = vertices[count-1];
 
-    //you arrange the points by filling our vertices in both clockwise and counter-clockwise directions using the determinant function
-    for (i=1;i<count-1;i++)
-    {
+    for (int i=1; i<count-1; i++){
         PointsDirection determinant = isCCW(referencePointA, referencePointB, vertices[i]);
-        if (determinant == CCW)
-        {
-            sortedVertices.push_back(vertices[i]);iCounterClockWise++;
-        }
-        else
-        {
+        if (determinant == CCW){
+            sortedVertices.push_back(vertices[i]);
+            ccwIndex++;
+        }else{
             endSorted.push_back(vertices[i]);
-        }//endif
-    }//endif
-     std::reverse(endSorted.begin(),endSorted.end());
-   sortedVertices[iCounterClockWise] = vertices[count-1];
-     sortedVertices.insert(sortedVertices.end(), endSorted.begin(), endSorted.end());
+        }
+    }
 
-
+    std::reverse(endSorted.begin(),endSorted.end());
+    sortedVertices.insert(sortedVertices.begin() + ccwIndex, vertices[count-1]);
+    sortedVertices.insert(sortedVertices.end(), endSorted.begin(), endSorted.end());
     return sortedVertices;
+}
+
+Vec getCentroid(std::vector<Vec>& vs)
+{
+    int count = vs.size();
+	b2Vec2 c; c.Set(0.0f, 0.0f);
+	float area = 0.0f;
+
+	// pRef is the reference point for forming triangles.
+	// It's location doesn't change the result (except for rounding error).
+	b2Vec2 pRef(0.0f, 0.0f);
+
+	const float inv3 = 1.0f / 3.0f;
+
+	for (int i = 0; i < count; ++i)
+	{
+		// Triangle vertices.
+		b2Vec2 p1 = pRef;
+		b2Vec2 p2 = vs[i].toB2v();
+		b2Vec2 p3 = i + 1 < count ? vs[i+1].toB2v() : vs[0].toB2v();
+
+		b2Vec2 e1 = p2 - p1;
+		b2Vec2 e2 = p3 - p1;
+
+		float D = b2Cross(e1, e2);
+
+		float triangleArea = 0.5f * D;
+		area += triangleArea;
+		c += triangleArea * inv3 * (p1 + p2 + p3);
+	}
+
+	// Centroid
+		c *= 1.0f / area;
+            std::cout << "center x: " << c.x << " center y: " << c.y << std::endl;
+            std::cout  << std::endl;
+
+	return Vec(c);
+
 }
 
 void Splitter::splitBox2dBody(b2Body* body, LineSegment intersectionLine)
@@ -108,12 +138,6 @@ void Splitter::splitBox2dBody(b2Body* body, LineSegment intersectionLine)
     ccwPoints.push_back(entry.pixToM());
     ccwPoints.push_back(exit.pixToM());
 
-//    cwPoints.push_back(entry);
-//    cwPoints.push_back(exit);
-//
-//    ccwPoints.push_back(entry);
-//    ccwPoints.push_back(exit);
-
     if(!splitBodyByClockWiseOrCounterClockWiseDirection(body, intersectionLine, cwPoints, ccwPoints)){
         return ;
     }
@@ -122,17 +146,19 @@ void Splitter::splitBox2dBody(b2Body* body, LineSegment intersectionLine)
         return;
      }
 
-    Vec center  = intersectionLine.getCenter();
-    std::sort(cwPoints.begin(), cwPoints.end(), CCWComparator(center));
-    std::sort(ccwPoints.begin(), ccwPoints.end(), CCWComparator(center));
+    std::vector<Vec> cwPoints1 = sortVecs(cwPoints);
+    std::vector<Vec> ccwPoints2 = sortVecs(ccwPoints);
 
-//    std::vector<Vec> cwPoints1 = arrangeVertices(cwPoints);
-//    std::vector<Vec> ccwPoints2 = arrangeVertices(ccwPoints);
+    for(auto v : cwPoints1){
+        std::cout << "x: " << v.x << " y: " << v.y << std::endl;
+    }
+            std::cout << std::endl;
 
-    if(!areVecsValid(cwPoints)) return;
-    if(!areVecsValid(ccwPoints)) return;
 
-    std::vector<B2BoxBuilder> builders = getSplitBodies(body,cwPoints,ccwPoints);
+    if(!areVecsValid(cwPoints1)) return;
+    if(!areVecsValid(ccwPoints2)) return;
+
+    std::vector<B2BoxBuilder> builders = getSplitBodies(body,cwPoints1,ccwPoints2);
     callbackHooks(builders, body);
 }
 
@@ -169,10 +195,33 @@ bool isDegenerate(std::vector<Vec> vertices){
 	return false;
 }
 
+bool Splitter::hasValidArea(std::vector<Vec>& points){
+    int count = points.size();
+    int prevIndex = count - 1;
+    float area = 0.0f;
+    for(int currentIndex = 0; currentIndex < count; currentIndex++){
+        Vec currentVec = points[currentIndex];
+        Vec nextVec = points[prevIndex];
+        float x = (nextVec.x + currentVec.x);
+        float y = (nextVec.y - currentVec.y);
+        area = area + (x * y);
+        prevIndex = currentIndex;
+    }
+    if(area < 0.0f){
+        area = area * -1;
+    }
+    area /=2;
+    return (area > b2_epsilon);
+}
+
 bool Splitter::areVecsValid(std::vector<Vec>& points){
     if(!areVecPointLengthsValid(points)){
         return false;
     }
+
+     if(!hasValidArea(points)){
+        return false;
+     }
 
 //    if(!ComputeCentroid(points)){
 //        return false;
@@ -218,6 +267,8 @@ bool Splitter::ComputeCentroid(std::vector<Vec>& vs)
 	return (area > b2_epsilon);
 
 }
+
+
 
 bool Splitter::areVecPointLengthsValid( std::vector<Vec>& vertices){
     int count = vertices.size();

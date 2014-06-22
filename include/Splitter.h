@@ -108,7 +108,8 @@ public:
         bool ComputeCentroid(std::vector<Vec>& vs);
         bool areVecsValid( std::vector<Vec>& points);
         bool areVecPointLengthsValid( std::vector<Vec>& points);
-        std::vector<Vec> arrangeVertices(std::vector<Vec> vertices);
+        std::vector<Vec> sortVecs( std::vector<Vec> vertices);
+        bool hasValidArea(std::vector<Vec>& points);
 
         std::unordered_map<b2Body*,  LineSegment, TemplateHasher<b2Body*>> m_b2BodiesToIntersections;
         std::vector<B2BodySplitCallback*> m_callbacks;
