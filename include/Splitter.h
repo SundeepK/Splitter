@@ -14,13 +14,13 @@
 #include "Vec.h"
 #include <algorithm>
 
-struct CCWComparator : std::binary_function<Vec, Vec, bool>
+struct CCWComparator : std::binary_function<b2Vec2, b2Vec2, bool>
 {
     //Polar coordinate system
     //sorting angles in counter-clockwise
-    Vec M;
-    CCWComparator(Vec v) : M(v) {}
-    bool operator() ( Vec o1,  Vec o2){
+    b2Vec2 M;
+    CCWComparator(b2Vec2 v) : M(v) {}
+    bool operator() ( b2Vec2 o1,  b2Vec2 o2){
 
         float ang1     = atan( ((o1.y - M.y)/(o1.x - M.x) ) * M_PI / 180);
         float ang2     = atan( (o2.y - M.y)/(o2.x - M.x) * M_PI / 180);
@@ -31,9 +31,9 @@ struct CCWComparator : std::binary_function<Vec, Vec, bool>
     }
 };
 
-struct Comparator2 : std::binary_function<Vec, Vec, int>
+struct Comparator2 : std::binary_function<b2Vec2, b2Vec2, int>
 {
-    int operator() ( Vec va,  Vec vb){
+    int operator() ( b2Vec2 va,  b2Vec2 vb){
         if (va.x > vb.x)
         {
             return 1;
@@ -48,9 +48,9 @@ struct Comparator2 : std::binary_function<Vec, Vec, int>
 };
 
 
-struct Comparator : std::binary_function<Vec, Vec, bool>
+struct Comparator : std::binary_function<b2Vec2, b2Vec2, bool>
 {
-    bool operator() ( Vec va,  Vec vb){
+    bool operator() ( b2Vec2 va,  b2Vec2 vb){
         if (va.x > vb.x)
         {
             return true;
@@ -86,34 +86,37 @@ public:
 
         struct LineSegment{
             public:
-                Vec entryPoint;
-                Vec exitPoint;
-                Vec getCenter(){
-                    return Vec((entryPoint.x  + exitPoint.x)/2, (entryPoint.y  + exitPoint.y)/2);
+                b2Vec2 entryPoint;
+                b2Vec2 exitPoint;
+                b2Vec2 getCenter(){
+                    return b2Vec2((entryPoint.x  + exitPoint.x)/2, (entryPoint.y  + exitPoint.y)/2);
                 }
         };
 
-        PointsDirection isCCW(Vec p1, Vec p2, Vec p3);
+        PointsDirection isCCW(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3);
         void splitBox2dBody(b2Body* body, LineSegment intersectionLine);
         void processIntersection(b2Body* body, const b2Vec2& point);
         void splitBody(b2Body* body, const b2Vec2 point);
         void addBody(b2Body* body, const b2Vec2 point);
-        std::vector<B2BoxBuilder> getSplitBodies(b2Body* body, std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints);
-        bool splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, LineSegment intersectionLine, std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints);
-        B2BoxBuilder getBox2dBuilder(std::vector<Vec> points, b2Body* body);
+        std::vector<B2BoxBuilder> getSplitBodies(b2Body* body, std::vector<b2Vec2>& cwPoints,  std::vector<b2Vec2>& ccwPoints);
+        bool splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, LineSegment intersectionLine, std::vector<b2Vec2>& cwPoints,  std::vector<b2Vec2>& ccwPoints);
+        B2BoxBuilder getBox2dBuilder(std::vector<b2Vec2> points, b2Body* body);
         void callbackHooks(std::vector<B2BoxBuilder>& builders, b2Body* body);
         bool isValidSegment(const LineSegment& segment);
-        bool areValidPoints(std::vector<Vec>& cwPoints,  std::vector<Vec>& ccwPoints);
-        bool isValidSize(std::vector<Vec>& cwPoints);
-        bool ComputeCentroid(std::vector<Vec>& vs);
-        bool areVecsValid( std::vector<Vec>& points);
-        bool areVecPointLengthsValid( std::vector<Vec>& points);
-        std::vector<Vec> sortVecs( std::vector<Vec> vertices);
-        bool hasValidArea(std::vector<Vec>& points);
+        bool areValidPoints(std::vector<b2Vec2>& cwPoints,  std::vector<b2Vec2>& ccwPoints);
+        bool isValidSize(std::vector<b2Vec2>& cwPoints);
+        bool ComputeCentroid(std::vector<b2Vec2>& vs);
+        bool areVecsValid( std::vector<b2Vec2>& points);
+        bool areVecPointLengthsValid( std::vector<b2Vec2>& points);
+        std::vector<b2Vec2> sortVecs( std::vector<b2Vec2> vertices);
+        bool hasValidArea(std::vector<b2Vec2>& points);
 
         std::unordered_map<b2Body*,  LineSegment, TemplateHasher<b2Body*>> m_b2BodiesToIntersections;
         std::vector<B2BodySplitCallback*> m_callbacks;
         std::vector<std::function<void(std::vector<B2BoxBuilder>& splitBodies, b2Body* body)>> m_functionCallbacks;
+
+        float scale =  Box2DConstants::WORLD_SCALE;
+
 };
 
 #endif // RAYCASTCALLBACK_H

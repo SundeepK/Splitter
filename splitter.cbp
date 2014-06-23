@@ -33,9 +33,18 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="/usr/local/include/SFML" />
+					<Add directory="/usr/local/include/Box2D" />
+					<Add directory="include" />
+					<Add directory="SFML-tools/SFML-tools/include" />
+					<Add directory="Box2d-tools/Box2d tools/include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add library="/usr/local/lib/libBox2D.a" />
+					<Add library="sfml-graphics" />
+					<Add library="sfml-system" />
+					<Add library="sfml-window" />
 				</Linker>
 			</Target>
 		</Build>
