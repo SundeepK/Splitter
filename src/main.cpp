@@ -55,7 +55,8 @@ int main()
     B2BoxBuilder builder(50,50);
     builder
     .bodyType(b2_dynamicBody)
-    .setPosition(b2Vec2(50,10))
+    .setPosition(b2Vec2(90,90))
+    .setRestitution(1.0f)
     .setDensity(1.0f);
     b2Body* b = box2DWorld.createB2Body(&builder);
     b->ApplyLinearImpulse( b2Vec2(0.1f,0.1f), b->GetWorldCenter(), true);
@@ -96,12 +97,12 @@ int main()
 
     box2DWorld.registerBodySplitCallback([&box2DWorld](std::vector<B2BoxBuilder> splitBodies, b2Body* body) -> void
     {
-
+        if(body->GetMass() < 0.1f) return;
         for(auto builder : splitBodies)
         {
             box2DWorld.createB2Body(&builder);
         }
-        box2DWorld.deleteBody(body);
+         box2DWorld.deleteBody(body);
     });
 
     while (App.isOpen())

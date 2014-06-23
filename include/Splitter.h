@@ -106,7 +106,7 @@ public:
         bool areValidPoints(std::vector<b2Vec2>& cwPoints,  std::vector<b2Vec2>& ccwPoints);
         bool isValidSize(std::vector<b2Vec2>& cwPoints);
         bool ComputeCentroid(std::vector<b2Vec2>& vs);
-        bool areVecsValid( std::vector<b2Vec2>& points);
+        bool areVecsValid( std::vector<b2Vec2> points);
         bool areVecPointLengthsValid( std::vector<b2Vec2>& points);
         std::vector<b2Vec2> sortVecs( std::vector<b2Vec2> vertices);
         bool hasValidArea(std::vector<b2Vec2>& points);

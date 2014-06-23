@@ -99,6 +99,12 @@ void Splitter::splitBox2dBody(b2Body* body, LineSegment intersectionLine)
     ccwPoints.push_back(b2Vec2(entry.x/scale, entry.y/scale));
     ccwPoints.push_back(b2Vec2(exit.x/scale, exit.y/scale));
 
+//    cwPoints.push_back( entry);
+//    cwPoints.push_back(exit);
+//
+//    ccwPoints.push_back(entry);
+//    ccwPoints.push_back(exit);
+
     if(!splitBodyByClockWiseOrCounterClockWiseDirection(body, intersectionLine, cwPoints, ccwPoints)){
         return ;
     }
@@ -173,10 +179,10 @@ bool Splitter::hasValidArea(std::vector<b2Vec2>& points){
     }
     area /=2;
 
-    return (area > 0.0001f);
+    return (area > 0.f);
 }
 
-bool Splitter::areVecsValid(std::vector<b2Vec2>& points){
+bool Splitter::areVecsValid(std::vector<b2Vec2> points){
     if(!areVecPointLengthsValid(points)){
         return false;
     }
@@ -188,6 +194,7 @@ bool Splitter::areVecsValid(std::vector<b2Vec2>& points){
      if(isDegenerate(points)){
         return false;
      }
+
 
     return true;
 
@@ -240,7 +247,13 @@ bool Splitter::splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, Lin
         b2Vec2 pointToCheck = body->GetWorldPoint(shape->GetVertex(vertextIndex));
         PointsDirection direction =  isCCW(intersectionLine.entryPoint, intersectionLine.exitPoint, scale * pointToCheck);
 
-        if(direction == COLLINEAR){
+        b2Vec2 diffFromEntryPoint = scale * pointToCheck - intersectionLine.entryPoint;
+        b2Vec2 diffFromExitPoint = scale * pointToCheck - intersectionLine.exitPoint;
+
+        if ((diffFromEntryPoint.x == 0 && diffFromEntryPoint.y == 0) || (diffFromExitPoint.x == 0 && diffFromExitPoint.y == 0))
+        {
+        }else{
+                if(direction == COLLINEAR){
             return false;
         }
 
@@ -249,6 +262,10 @@ bool Splitter::splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, Lin
         }else{
             ccwPoints.push_back(pointToCheck);
         }
+        }
+
+
+
     }
 
     return true;
@@ -262,6 +279,10 @@ void Splitter::clearIntersects()
 
 B2BoxBuilder Splitter::getBox2dBuilder(std::vector<b2Vec2> points, b2Body* body)
 {
+//    std::vector<b2Vec2> p;
+//    for(auto ve : points){
+//        p.push_back(b2Vec2(ve.x/scale, ve.y/scale))
+//    }
     B2BoxBuilder builder(points, body);
     return builder;
 }
