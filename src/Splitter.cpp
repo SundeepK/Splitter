@@ -43,6 +43,7 @@ void Splitter::splitBody(b2Body* body, const b2Vec2 point){
     b2Vec2 v = point;
     m_b2BodiesToIntersections[body].exitPoint = scale * v ;
     if(isValidSegment(m_b2BodiesToIntersections[body])){
+
       splitBox2dBody(body,  m_b2BodiesToIntersections[body]);
     }
     m_b2BodiesToIntersections.erase(body);
@@ -180,9 +181,9 @@ bool Splitter::areVecsValid(std::vector<b2Vec2>& points){
         return false;
     }
 
-    if(!hasValidArea(points)){
-        return false;
-     }
+//    if(!hasValidArea(points)){
+//        return false;
+//     }
 
      if(isDegenerate(points)){
         return false;
