@@ -33,9 +33,18 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="/usr/local/include/SFML" />
+					<Add directory="/usr/local/include/Box2D" />
+					<Add directory="include" />
+					<Add directory="SFML-tools/SFML-tools/include" />
+					<Add directory="Box2d-tools/Box2d tools/include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add library="/usr/local/lib/libBox2D.a" />
+					<Add library="sfml-graphics" />
+					<Add library="sfml-system" />
+					<Add library="sfml-window" />
 				</Linker>
 			</Target>
 		</Build>
@@ -47,9 +56,12 @@
 		<Unit filename="Box2d-tools/Box2d tools/include/B2DBuilderHelper.h" />
 		<Unit filename="Box2d-tools/Box2d tools/include/Box2DConstants.h" />
 		<Unit filename="Box2d-tools/Box2d tools/include/SFMLB2dDebugDraw.h" />
+		<Unit filename="Box2d-tools/Box2d tools/include/Vec.h" />
 		<Unit filename="Box2d-tools/Box2d tools/src/B2BoxBuilder.cpp" />
 		<Unit filename="Box2d-tools/Box2d tools/src/B2DBuilder.cpp" />
+		<Unit filename="Box2d-tools/Box2d tools/src/Box2DConstants.cpp" />
 		<Unit filename="Box2d-tools/Box2d tools/src/SFMLB2dDebugDraw.cpp" />
+		<Unit filename="Box2d-tools/Box2d tools/src/Vec.cpp" />
 		<Unit filename="SFML-tools/SFML-tools/include/Action.h" />
 		<Unit filename="SFML-tools/SFML-tools/include/ActionController.h" />
 		<Unit filename="SFML-tools/SFML-tools/include/ActionNode.h" />
@@ -64,10 +76,11 @@
 		<Unit filename="SFML-tools/SFML-tools/src/RealTimeNode.cpp" />
 		<Unit filename="SFML-tools/SFML-tools/src/RealtimeAndNode.cpp" />
 		<Unit filename="SFML-tools/SFML-tools/src/RealtimeOrNode.cpp" />
+		<Unit filename="include/B2BodySplitCallback.h" />
 		<Unit filename="include/B2DWorld.h" />
-		<Unit filename="include/RayCastCallback.h" />
+		<Unit filename="include/Splitter.h" />
 		<Unit filename="src/B2DWorld.cpp" />
-		<Unit filename="src/RayCastCallback.cpp" />
+		<Unit filename="src/Splitter.cpp" />
 		<Unit filename="src/main.cpp" />
 		<Extensions>
 			<code_completion />
