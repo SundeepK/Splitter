@@ -59,6 +59,7 @@
 		<Unit filename="Box2d-tools/Box2d tools/include/Vec.h" />
 		<Unit filename="Box2d-tools/Box2d tools/src/B2BoxBuilder.cpp" />
 		<Unit filename="Box2d-tools/Box2d tools/src/B2DBuilder.cpp" />
+		<Unit filename="Box2d-tools/Box2d tools/src/Box2DConstants.cpp" />
 		<Unit filename="Box2d-tools/Box2d tools/src/SFMLB2dDebugDraw.cpp" />
 		<Unit filename="Box2d-tools/Box2d tools/src/Vec.cpp" />
 		<Unit filename="SFML-tools/SFML-tools/include/Action.h" />

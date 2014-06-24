@@ -94,12 +94,12 @@ public:
         };
 
         PointsDirection isCCW(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3);
-        void splitBox2dBody(b2Body* body, LineSegment intersectionLine);
+        void splitBox2dBody(b2Body* body, const LineSegment& intersectionLine);
         void processIntersection(b2Body* body, const b2Vec2& point);
         void splitBody(b2Body* body, const b2Vec2 point);
         void addBody(b2Body* body, const b2Vec2 point);
         std::vector<B2BoxBuilder> getSplitBodies(b2Body* body, std::vector<b2Vec2>& cwPoints,  std::vector<b2Vec2>& ccwPoints);
-        bool splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, LineSegment intersectionLine, std::vector<b2Vec2>& cwPoints,  std::vector<b2Vec2>& ccwPoints);
+        bool splitBodyByClockWiseOrCounterClockWiseDirection(b2Body* body, const LineSegment& intersectionLine, std::vector<b2Vec2>& cwPoints,  std::vector<b2Vec2>& ccwPoints);
         B2BoxBuilder getBox2dBuilder(std::vector<b2Vec2> points, b2Body* body);
         void callbackHooks(std::vector<B2BoxBuilder>& builders, b2Body* body);
         bool isValidSegment(const LineSegment& segment);
@@ -108,12 +108,20 @@ public:
         bool ComputeCentroid(std::vector<b2Vec2>& vs);
         bool areVecsValid( std::vector<b2Vec2> points);
         bool areVecPointLengthsValid( std::vector<b2Vec2>& points);
-        std::vector<b2Vec2> sortVecs( std::vector<b2Vec2> vertices);
+        std::vector<b2Vec2> sortVecs(std::vector<b2Vec2>& vertices);
         bool hasValidArea(std::vector<b2Vec2>& points);
+        void setUpPointsWithLineSegment(const LineSegment& intersectionLine);
+        bool isSplitSuccessful(b2Body* body, const LineSegment& intersectionLine);
+        bool areSplitBodiesValid();
+        void notifyListenersOfSplitBodiesFor(b2Body* body);
+        bool isSamePoint(const b2Vec2& pointToCheck , const LineSegment& intersectionLine);
+
 
         std::unordered_map<b2Body*,  LineSegment, TemplateHasher<b2Body*>> m_b2BodiesToIntersections;
         std::vector<B2BodySplitCallback*> m_callbacks;
         std::vector<std::function<void(std::vector<B2BoxBuilder>& splitBodies, b2Body* body)>> m_functionCallbacks;
+        std::vector<b2Vec2> m_cwPoints;
+        std::vector<b2Vec2> m_ccwPoints;
 
         float scale =  Box2DConstants::WORLD_SCALE;
 
