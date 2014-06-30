@@ -24,6 +24,9 @@
 					<Add library="sfml-graphics" />
 					<Add library="sfml-system" />
 					<Add library="sfml-window" />
+					<Add library="GLU" />
+					<Add library="GL" />
+					<Add library="glut" />
 				</Linker>
 			</Target>
 			<Target title="Release">

@@ -33,6 +33,7 @@ public:
     void deleteBody(b2Body* body);
     void registerBodySplitCallback(std::function<void(std::vector<B2BoxBuilder> splitBodies, b2Body* body)> callback );
     void clearIntersects();
+    b2Body* GetBodyList();
 
 
 protected:

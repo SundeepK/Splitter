@@ -77,7 +77,7 @@ void B2DWorld::update(float accumulator){
 //	m_world.ClearForces();
 
     //smooth positions via interpolation
-	m_world.DrawDebugData();
+   // m_world.DrawDebugData();
 
 
 }
@@ -110,6 +110,10 @@ for (b2Body * b = m_world.GetBodyList (); b != NULL; b = b->GetNext ())
 		c->smoothedAngle = c->previousAngle = b->GetAngle ();
 	}
 
+}
+
+b2Body* B2DWorld::GetBodyList(){
+    return m_world.GetBodyList();
 }
 
 void B2DWorld::deleteBody(b2Body* body){
