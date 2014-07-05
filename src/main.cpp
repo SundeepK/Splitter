@@ -26,17 +26,9 @@ void drawCircle(sf::RenderWindow& App, sf::Vector2f pos, sf::Color color) {
 
 }
 
-int isCCW(sf::Vector2f p1, sf::Vector2f p2, sf::Vector2f p3) {
-    return p1.x*p2.y+p2.x*p3.y+p3.x*p1.y-p1.y*p2.x-p2.y*p3.x-p3.y*p1.x;
-}
-
-
-
-int isCCW(b2Vec2 a, b2Vec2 b, b2Vec2 c) {
- //       return p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y);
-    return (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
-
- //   return p1.x*p2.y+p2.x*p3.y+p3.x*p1.y-p1.y*p2.x-p2.y*p3.x-p3.y*p1.x;
+float isCCW(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3) {
+  //  return ceil((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y));
+    return round(p1.x*p2.y+p2.x*p3.y+p3.x*p1.y-p1.y*p2.x-p2.y*p3.x-p3.y*p1.x);
 }
 
 float getLength(b2Vec2 edge1, b2Vec2 edge2) {
