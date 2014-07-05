@@ -200,7 +200,7 @@ int main() {
 
         for(int i=0; i< count; i++) {
             b2Vec2 edge1 = body->GetWorldPoint((shape)->GetVertex(i));
-            std::pair<b2Vec2,b2Vec2> posToTexPair (fl(edge1), textures->textCoords[i]);
+            std::pair<b2Vec2,b2Vec2> posToTexPair (fl(Box2DConstants::WORLD_SCALE*edge1), textures->textCoords[i]);
             posToTextCoords.insert(posToTexPair);
         }
 
@@ -211,15 +211,15 @@ int main() {
             int newShapeCount = newShape->GetVertexCount();
 
             for(int i=0; i< newShapeCount; i++) {
-                b2Vec2 newVert =(newShape)->GetVertex(i);
+                b2Vec2 newVert =Box2DConstants::WORLD_SCALE*(newShape)->GetVertex(i);
                 if(posToTextCoords.find(fl(newVert)) != posToTextCoords.end()) {
                     texturesForNewBody->textCoords.push_back(posToTextCoords[fl(newVert)]);
 
                 } else {
                     for(int i=0; i< count; i++) {
                         int i2 = i + 1 < count ? i + 1 : 0;
-                        b2Vec2 edge1 = body->GetWorldPoint((shape)->GetVertex(i));
-                        b2Vec2 edge2 = body->GetWorldPoint((shape)->GetVertex(i2));
+                        b2Vec2 edge1 = Box2DConstants::WORLD_SCALE*body->GetWorldPoint((shape)->GetVertex(i));
+                        b2Vec2 edge2 = Box2DConstants::WORLD_SCALE*body->GetWorldPoint((shape)->GetVertex(i2));
 
 //                        if(fl(edge1.x) > fl(edge2.x) && fl(edge1.y) > fl(edge2.y)){
 //                            b2Vec2 temp = edge1;
@@ -245,8 +245,6 @@ int main() {
                             b2Vec2 newTex2 (  tex2.x  * amountThrough,  tex2.y * amountThrough);
                             b2Vec2 newTex = newTex1 + newTex2;
                             texturesForNewBody->textCoords.push_back(newTex);
-                            std::pair<b2Vec2,b2Vec2> posToTexPair (fl(newVert),newTex);
-                            posToTextCoords.insert(posToTexPair);
                             break;
                         }
 
