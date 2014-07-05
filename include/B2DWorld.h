@@ -14,6 +14,16 @@
 #include <iostream>
 #include "Splitter.h"
 
+struct segment {
+    b2Vec2 p1;
+    b2Vec2 p2;
+};
+
+struct Texcoords {
+public:
+    std::vector<b2Vec2> textCoords;
+};
+
 struct PhysicsComponent  {
 	float previousAngle;
 	float smoothedAngle;
@@ -32,6 +42,7 @@ public:
     void rayCast(const sf::Vector2f& point1, const sf::Vector2f& point2)  ;
     void deleteBody(b2Body* body);
     void registerBodySplitCallback(std::function<void(std::vector<B2BoxBuilder> splitBodies, b2Body* body)> callback );
+    void registerBodySplitCallback(B2BodySplitCallback* callback );
     void clearIntersects();
     b2Body* GetBodyList();
 

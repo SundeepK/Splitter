@@ -11,6 +11,11 @@ void Splitter::registerBodySplitCallback(std::function<void(std::vector<B2BoxBui
     m_functionCallbacks.push_back(callback);
 }
 
+
+void Splitter::registerBodySplitCallback(B2BodySplitCallback* callback) {
+    m_callbacks.push_back(callback);
+}
+
 PointsDirection Splitter::isCCW(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3) {
     int direction = p1.x*p2.y+p2.x*p3.y+p3.x*p1.y-p1.y*p2.x-p2.y*p3.x-p3.y*p1.x;
     if(direction > 0) return PointsDirection::CW;

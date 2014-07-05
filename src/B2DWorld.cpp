@@ -48,6 +48,10 @@ b2Body* B2DWorld::createB2Body(B2Builder* builder){
     m_raycastCallback.registerBodySplitCallback(callback);
  }
 
+  void B2DWorld::registerBodySplitCallback(B2BodySplitCallback* callback){
+    m_raycastCallback.registerBodySplitCallback(callback);
+ }
+
 
 void B2DWorld::step(float dt){
     m_world.Step(dt, VELOCITY_ITERATIONS, POSITION_ITERATIONS);

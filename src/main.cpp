@@ -11,12 +11,9 @@
 #include <math.h>
 #include <SFML/OpenGL.hpp>
 #include <GL/glut.h>
+#include "BodyListener.h"
 
 
-struct Texcoords {
-    public:
-    std::vector<b2Vec2> textCoords;
-};
 
 void drawCircle(sf::RenderWindow& App, sf::Vector2f pos, sf::Color color) {
     sf::CircleShape entryCircle(4);
@@ -30,10 +27,59 @@ int isCCW(sf::Vector2f p1, sf::Vector2f p2, sf::Vector2f p3) {
     return p1.x*p2.y+p2.x*p3.y+p3.x*p1.y-p1.y*p2.x-p2.y*p3.x-p3.y*p1.x;
 }
 
+
+
+int isCCW(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3) {
+    return p1.x*p2.y+p2.x*p3.y+p3.x*p1.y-p1.y*p2.x-p2.y*p3.x-p3.y*p1.x;
+}
+
+float getLength(b2Vec2 edge1, b2Vec2 edge2){
+  return  sqrt(pow(edge2.x - edge1.x, 2) + pow(edge2.y - edge1.y, 2));
+}
+
+bool isOnSegment(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3) {
+    if(std::min(p1.x, p2.x) <= p3.x <= std::max(p1.x, p2.x) && std::min(p1.y, p2.y) <= p3.y <= std::max(p1.y, p2.y) ) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+bool segmentIntersect(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3, b2Vec2 p4) {
+
+    float d1 = isCCW(p3,p4,p1);
+    float d2 = isCCW(p3,p4,p2);
+    float d3 = isCCW(p1,p2,p3);
+    float d4 = isCCW(p1,p2,p4);
+
+    if((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0) && (d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0)) {
+        return true;
+    } else if(d1 ==0 && isOnSegment(p3,p4,p1)) {
+        return true;
+    } else if(d2 == 0 && isOnSegment(p3,p4,p2)) {
+        return true;
+    } else if(d3 == 0 && isOnSegment(p1,p2,p3)) {
+        return true;
+    } else if(d4 == 0 && isOnSegment(p1,p2,p4)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+
+
 B2BoxBuilder getBox2dBuilder(std::vector<b2Vec2> points, b2Body* body) {
     B2BoxBuilder builder(points, body);
     return builder;
 }
+
+float fl(float num){
+   return floor( num * 100.00 + 0.5 ) / 100.00;
+}
+
 
 int main() {
     sf::ContextSettings settings;
@@ -48,7 +94,7 @@ int main() {
     App.setFramerateLimit(60);
 
 
-     glDisable(GL_LIGHTING);
+    glDisable(GL_LIGHTING);
 
     // Configure the viewport (the same size as the window)
     glViewport(0, 0, App.getSize().x, App.getSize().y);
@@ -59,7 +105,7 @@ int main() {
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-   glEnable(GL_TEXTURE_2D);
+    glEnable(GL_TEXTURE_2D);
     glShadeModel(GL_SMOOTH);                        // Enable Smooth Shading
     glClearColor(0.0f, 0.0f, 0.0f, 0.5f);                   // Black Background
     glClearDepth(1.0f);                         // Depth Buffer Setup
@@ -87,7 +133,7 @@ int main() {
     sf::VertexArray sliceLine(sf::Lines, 2);
     bool isleftPressed = false;
 
-    B2DWorld box2DWorld(50.8f);
+    B2DWorld box2DWorld(9.8f);
     SFMLB2dDebugDraw drawer(App);
     box2DWorld.setDebugDraw(drawer);
     drawer.SetFlags(b2Draw::e_shapeBit);
@@ -148,16 +194,60 @@ int main() {
 
     std::vector<b2Body*> splitbs;
 
-   box2DWorld.registerBodySplitCallback([&box2DWorld, &splitbs](std::vector<B2BoxBuilder> splitBodies, b2Body* body) -> void {
+
+    box2DWorld.registerBodySplitCallback([&box2DWorld, &splitbs](std::vector<B2BoxBuilder> splitBodies, b2Body* body) -> void {
         if(body->GetMass() < 0.1f) return;
-        for(auto builder : splitBodies) {
-            b2Body* b =     box2DWorld.createB2Body(&builder);
-        //    splitbs.push_back(b);
-        }
 
         Texcoords *textures   = (Texcoords*) body->GetUserData();
-        if(textures){
-             delete textures;
+
+        b2PolygonShape* shape =((b2PolygonShape*)body->GetFixtureList()->GetShape());
+        int count = shape->GetVertexCount();
+
+        for(auto builder : splitBodies) {
+            b2Body* newB =     box2DWorld.createB2Body(&builder);
+               Texcoords *texturesForNewBody = new Texcoords();
+                b2PolygonShape* newShape =((b2PolygonShape*)newB->GetFixtureList()->GetShape());
+            int newShapeCount = newShape->GetVertexCount();
+
+            for(int i=0; i< newShapeCount; i++) {
+
+
+                int i2 = i + 1 < count ? i + 1 : 0;
+                b2Vec2 edge1 = body->GetWorldPoint((shape)->GetVertex(i));
+                b2Vec2 edge2 = body->GetWorldPoint((shape)->GetVertex(i2));
+
+                 b2Vec2 newVert =(newShape)->GetVertex(i);
+
+                 if(fl(newVert.x) == fl(edge1.x) && fl(newVert.y) == fl(edge1.y)){
+//                   std::cout << "same vert texcoords  " <<  textures->textCoords[i].x << "," << textures->textCoords[i].y << std::endl;
+//                   std::cout <<  std::endl;
+
+                  texturesForNewBody->textCoords.push_back(textures->textCoords[i]);
+                 }
+                 else if( (fl(newVert.x) == fl(edge2.x) && fl(newVert.y) == fl(edge2.y)) &&
+                            isCCW( edge1, newVert, edge2) == 0){
+                   float length = getLength(edge1, edge2);
+                   float newVertLength = getLength(newVert, edge2);
+
+                   float percetageThrough = newVertLength / length;
+
+//                   std::cout << "percentagle thoguht " <<  percetageThrough << std::endl;
+//                   std::cout <<  std::endl;
+
+                   b2Vec2 newTex1 (  textures->textCoords[i].x  * 1.0f -newVertLength,  textures->textCoords[i].y  * 1.0f -newVertLength);
+                   b2Vec2 newTex2 (  textures->textCoords[i2].x  * newVertLength,  textures->textCoords[i2].y * newVertLength);
+                   b2Vec2 newTex = newTex1 + newTex2;
+                   texturesForNewBody->textCoords.push_back(newTex);
+                 }
+                  newB->SetUserData(texturesForNewBody);
+            }
+
+
+            //    splitbs.push_back(b);
+        }
+
+        if(textures) {
+            delete textures;
         }
         box2DWorld.deleteBody(body);
 
@@ -202,7 +292,7 @@ int main() {
             }
         }
 
-         box2DWorld.update(deltaClock.restart().asSeconds());
+        box2DWorld.update(deltaClock.restart().asSeconds());
 
         App.pushGLStates();
         App.clear(sf::Color::Black);
@@ -215,7 +305,7 @@ int main() {
         glClear(GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
 
-       //draw opengl here
+        //draw opengl here
         glColor3f(1.0f,1.0f,1.0f);
 
 
@@ -238,7 +328,7 @@ int main() {
             glBegin(GL_POLYGON);//begin drawing of polygon
             for(int i=0; i<shape->GetVertexCount(); i++) {
                 if(tex) {
-                   glTexCoord2d(tex->textCoords[i].x, tex->textCoords[i].y);
+                    glTexCoord2d(tex->textCoords[i].x, tex->textCoords[i].y);
                 }
                 glVertex2f(points[i].x*M2P,points[i].y*M2P);
             }
