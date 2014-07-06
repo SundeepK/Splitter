@@ -11,7 +11,6 @@
 #include <math.h>
 #include <SFML/OpenGL.hpp>
 #include <GL/glut.h>
-#include "BodyListener.h"
 #include "TemplateHasher.h"
 #include <unordered_map>
 #include <algorithm>
@@ -127,7 +126,7 @@ int main() {
 
     sf::Clock deltaClock;
 
-    box2DWorld.registerBodySplitCallback([&box2DWorld, &splitbs, &textureMapper](std::vector<B2BoxBuilder> splitBodies, b2Body* body) -> void {
+    box2DWorld.registerBodySplitCallback([&box2DWorld, &textureMapper](std::vector<B2BoxBuilder> splitBodies, b2Body* body) -> void {
         if(body->GetMass() < 0.1f) return;
 
         Texcoords *textures   = (Texcoords*) body->GetUserData();
