@@ -18,7 +18,7 @@ private:
     b2Vec2 fl(b2Vec2 num);
     float getLength(b2Vec2 edge1, b2Vec2 edge2);
     float isCollinear(const b2Vec2& p1, const b2Vec2& p2, const b2Vec2& p3);
-    b2Vec2 calculateNewTextCoord(float amountThrough, b2Vec2 texCoordsOfEdge1, b2Vec2 texCoordsOfEdge2, std::vector<b2Vec2> parentTexCoords);
+    b2Vec2 calculateNewTextCoord(float amountThrough, b2Vec2 texCoordsOfEdge1, b2Vec2 texCoordsOfEdge2);
     b2Vec2 getTexCoordFromParentBody(b2Vec2 vertex,  const b2Body* parentBody, std::vector<b2Vec2> parentTexCoords);
     b2Vec2 getTexCoordForChildVertex(b2Vec2 vertex, const b2Body* parentBody, std::vector<b2Vec2> parentTexCoords);
     std::vector<b2Vec2> getChildTexCoords(const b2Body* childBody, const b2Body* parentBody, std::vector<b2Vec2> texCoords);

@@ -33,7 +33,7 @@ void TextureMapper::cacheTextureCoords(const b2Body* parentBody, std::vector<b2V
     }
 }
 
-b2Vec2 TextureMapper::calculateNewTextCoord(float amountThrough, b2Vec2 texCoordsOfEdge1, b2Vec2 texCoordsOfEdge2, std::vector<b2Vec2> parentTexCoords) {
+b2Vec2 TextureMapper::calculateNewTextCoord(float amountThrough, b2Vec2 texCoordsOfEdge1, b2Vec2 texCoordsOfEdge2) {
     //interpolated texcoords = (1 - amountThrough) * edge1_textcoords + amountThrough * edge2_texcoords
     b2Vec2 newTex1 (  texCoordsOfEdge1.x  * (1.0f -amountThrough),  texCoordsOfEdge1.y  * (1.0f -amountThrough));
     b2Vec2 newTex2 (  texCoordsOfEdge2.x  * amountThrough,  texCoordsOfEdge2.y * amountThrough);
@@ -59,9 +59,10 @@ b2Vec2 TextureMapper::getTexCoordFromParentBody(b2Vec2 vertex,  const b2Body* pa
             float amountThrough = getPercetangeThrough(edge1, edge2, vertex);
             b2Vec2 tex1 = parentTexCoords[i];
             b2Vec2 tex2 = parentTexCoords[i2];
-            return calculateNewTextCoord(amountThrough,tex1, tex2, parentTexCoords);
+            return calculateNewTextCoord(amountThrough,tex1, tex2);
         }
     }
+    return b2Vec2(0,0);
     //if we get here then the vertex to texture map is not even part of the parent so incorrect to begin with
     //TODO handle this edge case in mapSplitBody() function
 }
@@ -88,7 +89,6 @@ std::vector<b2Vec2> TextureMapper::getChildTexCoords(const b2Body* childBody, co
 //does nothing if the number of verticies do not match the number of texcoords
 std::vector<b2Vec2> TextureMapper::mapSplitBody(const b2Body* childBody, const b2Body* parentBody, std::vector<b2Vec2> texCoords) {
     b2PolygonShape* parentShape =((b2PolygonShape*)parentBody->GetFixtureList()->GetShape());
-    int parentVertexCount = parentShape->GetVertexCount();
     std::vector<b2Vec2> childTexcoords;
 
     if(parentShape->GetVertexCount() == texCoords.size()) {
