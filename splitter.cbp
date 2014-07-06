@@ -13,6 +13,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add option="-Wall -pedantic" />
 					<Add directory="/usr/local/include/SFML" />
 					<Add directory="/usr/local/include/Box2D" />
 					<Add directory="include" />
