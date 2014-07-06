@@ -12,14 +12,15 @@ Splitter needs a few things to build and run:
 - Opengl
 - SFML
 - Box2d
-- Codeblocks (if you which to open the project file)
+- Codeblocks (if you wish to open the project file)
 
-Currently no CMAKE is available, but will be soon.
+Currently no CMAKE is available, but will be soon. Raise any problems with building/compiling/running the codeif you need.
 
 ## Usage
 Splitter extends b2RayCastCallback, so you will only need to perform 2 raycasts to get box2d bodies to split, (Check the example main class for details).
 
 ```CPP
+    //example usage
     Splitter splitter;
     m_world.RayCast(&splitter, point1, point2);
     m_world.RayCast(&splitter, point2, point1);
@@ -30,13 +31,14 @@ Splitter allows you to register both a callback class (which much extend B2BodyS
 
 ```CPP
 
+    //example callback
     splitter.registerBodySplitCallback([&box2dWorld](std::vector<B2BoxBuilder> splitBodies, b2Body* body) -> void {
        TextureMapper textureMapper(30.0f); //world scale
        Texcoords *parentBodyTexCoords   = (Texcoords*) body->GetUserData();
        std::vector<b2Vec2> texCoords = parentBodyTexCoords->textCoords;
        
         for(auto builder : splitBodies) {
-            b2Body* newSplitBody = builder.build(m_world);
+            b2Body* newSplitBody = builder.build(box2dWorld); //your box2d world
             Texcoords *texturesForNewBody = new Texcoords();
             std::vector<b2Vec2> newBodyTexCoords =  textureMapper.mapSplitBody(newSplitBody, body, texCoords);
             texturesForNewBody->textCoords = newBodyTexCoords;
@@ -52,6 +54,8 @@ Splitter allows you to register both a callback class (which much extend B2BodyS
 To use TextureMapper class, you must make sure that the original body was textured correcly before. With it's verticies mapping in the same order as it's texture coordinates.
 
 That's all there is to it.
+
+The test texture used in the main example and screenshot is taken from here http://www.isc.tamu.edu/~lewing/linux/index.html. 
 
 
 
