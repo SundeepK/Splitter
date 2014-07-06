@@ -29,8 +29,9 @@ Splitter extends b2RayCastCallback, so you will only need to perform 2 raycasts 
 Splitter allows you to register both a callback class (which much extend B2BodySplitCallback) or a function to recieve callbacks when a box2d body has been split. You can then use TextureMapper class to get a vector of b2Vecs of your texture coords (see example main for more details). Below is a simple example:
 
 ```CPP
+
     splitter.registerBodySplitCallback([&box2dWorld](std::vector<B2BoxBuilder> splitBodies, b2Body* body) -> void {
-       TextureMapper textureMapper(30.0f);
+       TextureMapper textureMapper(30.0f); //world scale
        Texcoords *parentBodyTexCoords   = (Texcoords*) body->GetUserData();
        std::vector<b2Vec2> texCoords = parentBodyTexCoords->textCoords;
        
@@ -48,6 +49,9 @@ Splitter allows you to register both a callback class (which much extend B2BodyS
 
 ```
 
+To use TextureMapper class, you must make sure that the original body was textured correcly before. With it's verticies mapping in the same order as it's texture coordinates.
+
+That's all there is to it.
 
 
 
