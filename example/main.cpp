@@ -77,7 +77,7 @@ int main() {
     B2DWorld box2DWorld(9.8f);
 
     //box
-    B2BoxBuilder builder(50,50);
+    B2BoxBuilder builder(70,70);
     builder
     .bodyType(b2_dynamicBody)
     .setPosition(b2Vec2(200,100))
@@ -102,7 +102,7 @@ int main() {
 //    b2Body* b3 = box2DWorld.createB2Body(&eightSides);
 
 
-    B2BoxBuilder secondndbox(50,50);
+    B2BoxBuilder secondndbox(70,70);
     secondndbox
     .bodyType(b2_dynamicBody)
     .setPosition(b2Vec2(120,10))
