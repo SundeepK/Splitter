@@ -81,9 +81,12 @@
 		<Unit filename="SFML-tools/SFML-tools/src/RealtimeOrNode.cpp" />
 		<Unit filename="include/B2BodySplitCallback.h" />
 		<Unit filename="include/B2DWorld.h" />
+		<Unit filename="include/B2vecHasher.h" />
 		<Unit filename="include/Splitter.h" />
+		<Unit filename="include/TextureMapper.h" />
 		<Unit filename="src/B2DWorld.cpp" />
 		<Unit filename="src/Splitter.cpp" />
+		<Unit filename="src/TextureMapper.cpp" />
 		<Unit filename="src/main.cpp" />
 		<Extensions>
 			<code_completion />
