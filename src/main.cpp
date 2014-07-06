@@ -16,74 +16,12 @@
 #include <unordered_map>
 #include <algorithm>
 #include "B2vecHasher.h"
-
-
-
-void drawCircle(sf::RenderWindow& App, sf::Vector2f pos, sf::Color color) {
-    sf::CircleShape entryCircle(4);
-    entryCircle.setFillColor(color);
-    entryCircle.setPosition(sf::Vector2f(pos.x-entryCircle.getRadius(), pos.y-entryCircle.getRadius()));
-    App.draw(entryCircle);
-
-}
-
-float isCCW(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3) {
-  //  return ceil((b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y));
-    return round(p1.x*p2.y+p2.x*p3.y+p3.x*p1.y-p1.y*p2.x-p2.y*p3.x-p3.y*p1.x);
-}
-
-float getLength(b2Vec2 edge1, b2Vec2 edge2) {
-    return  sqrt(pow(edge2.x - edge1.x, 2) + pow(edge2.y - edge1.y, 2));
-}
-
-bool isOnSegment(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3) {
-    if(std::min(p1.x, p2.x) <= p3.x <= std::max(p1.x, p2.x) && std::min(p1.y, p2.y) <= p3.y <= std::max(p1.y, p2.y) ) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-
-bool segmentIntersect(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3, b2Vec2 p4) {
-
-    float d1 = isCCW(p3,p4,p1);
-    float d2 = isCCW(p3,p4,p2);
-    float d3 = isCCW(p1,p2,p3);
-    float d4 = isCCW(p1,p2,p4);
-
-    if((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0) && (d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0)) {
-        return true;
-    } else if(d1 ==0 && isOnSegment(p3,p4,p1)) {
-        return true;
-    } else if(d2 == 0 && isOnSegment(p3,p4,p2)) {
-        return true;
-    } else if(d3 == 0 && isOnSegment(p1,p2,p3)) {
-        return true;
-    } else if(d4 == 0 && isOnSegment(p1,p2,p4)) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-
-
+#include "TextureMapper.h"
 
 B2BoxBuilder getBox2dBuilder(std::vector<b2Vec2> points, b2Body* body) {
     B2BoxBuilder builder(points, body);
     return builder;
 }
-
-float fl(float num) {
-    return floor( num * 1000.00 + 0.5 ) / 1000.00;
-}
-
-b2Vec2 fl(b2Vec2 num) {
-
-    return b2Vec2(fl( num.x), fl( num.y));
-}
-
 
 int main() {
     sf::ContextSettings settings;
@@ -110,10 +48,10 @@ int main() {
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     glEnable(GL_TEXTURE_2D);
-    glShadeModel(GL_SMOOTH);                        // Enable Smooth Shading
-    glClearColor(0.0f, 0.0f, 0.0f, 0.5f);                   // Black Background
-    glClearDepth(1.0f);                         // Depth Buffer Setup
-    glEnable(GL_DEPTH_TEST);                        // Enables Depth Testing
+    glShadeModel(GL_SMOOTH);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
+    glClearDepth(1.0f);                  // Depth Buffer Setup
+    glEnable(GL_DEPTH_TEST);             // Enables Depth Testing
     glDepthFunc(GL_LEQUAL);
 
     GLuint texture = 0;
@@ -185,88 +123,29 @@ int main() {
     .setDensity(1.0f);
     box2DWorld.createB2Body(&groundShapebuilder);
 
+    TextureMapper textureMapper(Box2DConstants::WORLD_SCALE);
+
     sf::Clock deltaClock;
 
-    std::vector<b2Body*> splitbs;
-
-    std::unordered_map<b2Vec2,  b2Vec2, B2vecHasher> posToTextCoords;
-
-    box2DWorld.registerBodySplitCallback([&box2DWorld, &splitbs, &posToTextCoords](std::vector<B2BoxBuilder> splitBodies, b2Body* body) -> void {
+    box2DWorld.registerBodySplitCallback([&box2DWorld, &splitbs, &textureMapper](std::vector<B2BoxBuilder> splitBodies, b2Body* body) -> void {
         if(body->GetMass() < 0.1f) return;
 
         Texcoords *textures   = (Texcoords*) body->GetUserData();
 
-        b2PolygonShape* shape =((b2PolygonShape*)body->GetFixtureList()->GetShape());
-        int count = shape->GetVertexCount();
-
-        for(int i=0; i< count; i++) {
-            b2Vec2 edge1 = body->GetWorldPoint((shape)->GetVertex(i));
-            std::pair<b2Vec2,b2Vec2> posToTexPair (fl(Box2DConstants::WORLD_SCALE*edge1), textures->textCoords[i]);
-            posToTextCoords.insert(posToTexPair);
-        }
-
         for(auto builder : splitBodies) {
             b2Body* newB =     box2DWorld.createB2Body(&builder);
             Texcoords *texturesForNewBody = new Texcoords();
-            b2PolygonShape* newShape =((b2PolygonShape*)newB->GetFixtureList()->GetShape());
-            int newShapeCount = newShape->GetVertexCount();
-
-            for(int i=0; i< newShapeCount; i++) {
-                b2Vec2 newVert =Box2DConstants::WORLD_SCALE*(newShape)->GetVertex(i);
-                if(posToTextCoords.find(fl(newVert)) != posToTextCoords.end()) {
-                    texturesForNewBody->textCoords.push_back(posToTextCoords[fl(newVert)]);
-
-                } else {
-                    for(int i=0; i< count; i++) {
-                        int i2 = i + 1 < count ? i + 1 : 0;
-                        b2Vec2 edge1 = Box2DConstants::WORLD_SCALE*body->GetWorldPoint((shape)->GetVertex(i));
-                        b2Vec2 edge2 = Box2DConstants::WORLD_SCALE*body->GetWorldPoint((shape)->GetVertex(i2));
-
-//                        if(fl(edge1.x) > fl(edge2.x) && fl(edge1.y) > fl(edge2.y)){
-//                            b2Vec2 temp = edge1;
-//                            edge1 = edge2;
-//                            edge2 = temp;
-//
-//                            int tempi = i;
-//                            i = i2;
-//                            i2 = tempi;
-//                        }
-
-
-                        float dir = isCCW( edge1, newVert, edge2);
-                        if(isCCW( edge1, newVert, edge2) == 0) {
-                            float length = getLength(edge1, edge2);
-                            float newVertLength = getLength(newVert, edge2);
-                            float amountThrough = 1.0f - (newVertLength / length);
-
-                            b2Vec2 tex1 = textures->textCoords[i];
-                            b2Vec2 tex2 = textures->textCoords[i2];
-
-                            b2Vec2 newTex1 (  tex1.x  * (1.0f -amountThrough),  tex1.y  * (1.0f -amountThrough));
-                            b2Vec2 newTex2 (  tex2.x  * amountThrough,  tex2.y * amountThrough);
-                            b2Vec2 newTex = newTex1 + newTex2;
-                            texturesForNewBody->textCoords.push_back(newTex);
-                            break;
-                        }
-
-                    }
-
-                }
-                newB->SetUserData(texturesForNewBody);
-            }
-
+            std::vector<b2Vec2> newBOdyTexCoords =  textureMapper.mapSplitBody(newB, body,textures->textCoords);
+            texturesForNewBody->textCoords = newBOdyTexCoords;
+            newB->SetUserData(texturesForNewBody);
         }
 
         if(textures) {
             delete textures;
         }
         box2DWorld.deleteBody(body);
-            posToTextCoords.clear();
-
 
     });
-
-
 
     while (App.isOpen()) {
 
