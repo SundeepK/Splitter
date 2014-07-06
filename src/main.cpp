@@ -15,6 +15,7 @@
 #include "TemplateHasher.h"
 #include <unordered_map>
 #include <algorithm>
+#include "B2vecHasher.h"
 
 
 
@@ -188,7 +189,7 @@ int main() {
 
     std::vector<b2Body*> splitbs;
 
-    std::unordered_map<b2Vec2,  b2Vec2, b2vecHasher> posToTextCoords;
+    std::unordered_map<b2Vec2,  b2Vec2, B2vecHasher> posToTextCoords;
 
     box2DWorld.registerBodySplitCallback([&box2DWorld, &splitbs, &posToTextCoords](std::vector<B2BoxBuilder> splitBodies, b2Body* body) -> void {
         if(body->GetMass() < 0.1f) return;
