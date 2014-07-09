@@ -12,7 +12,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
   include_directories("${PROJECT_SOURCE_DIR}/example")
   include_directories("${PROJECT_SOURCE_DIR}/src")
   include_directories("${PROJECT_SOURCE_DIR}/Box2d-tools/Box2d\ tools")
+  include_directories("${PROJECT_SOURCE_DIR}/Box2d-tools/Box2d\ tools/include")
   include_directories("${PROJECT_SOURCE_DIR}/SFML-tools/SFML-tools")
+  include_directories("${PROJECT_SOURCE_DIR}/SFML-tools/SFML-tools/include")
 
 
   set(SRC "${PROJECT_SOURCE_DIR}/src")
@@ -32,6 +34,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
       "${HEAD}/TextureMapper.h"
       "${HEAD}/B2BodySplitCallback.h"   
       "${HEAD}/B2vecHasher.h" 
+	  "${HEAD}/B2DWorld.h"
      )
 
   set(SPLITTER_SRC
@@ -41,7 +44,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
 
   set(SPLITTER_EXAMPLE
 		"${EXAMPLE}/B2DWorld.cpp"
-		"${EXAMPLE}/B2DWorld.h"
 		"${EXAMPLE}/main.cpp"
 	)
 
@@ -95,17 +97,27 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
  #Find any version 2.X of SFML
  #See the FindSFML.cmake file for additional details and instructions
  find_package(SFML 2 REQUIRED system window graphics network audio)
- find_package(BOX2D)
+ find_package(BOX2D REQUIRED)
+ find_package(GLUT REQUIRED)
+ find_package(OpenGL REQUIRED)
+
+ 
+
+
  set(EXECUTABLE_NAME Splitter)
 
  if(SFML_FOUND)
-		add_executable(${EXECUTABLE_NAME} ${EXAMPLE}/main.cpp)
+		add_executable(${EXECUTABLE_NAME} ${EXAMPLE}/main.cpp ${EXAMPLE}/B2DWorld.cpp ${BOX2D_TOOLS_SRC} ${SFML_TOOLS_SRC} ${SPLITTER_SRC})
         target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES})
+        target_link_libraries(${EXECUTABLE_NAME} ${GLUT_LIBRARIES})
+        target_link_libraries(${EXECUTABLE_NAME} ${OpenGL_LIBRARIES})
+		target_link_libraries(${EXECUTABLE_NAME} GL GLU glut)
+
         target_link_libraries(${EXECUTABLE_NAME} ${BOX2D_LIBRARIES})
         target_link_libraries(${EXECUTABLE_NAME} ${box2d_tools})
         target_link_libraries(${EXECUTABLE_NAME} ${sfml_tools})
-        target_link_libraries(${EXECUTABLE_NAME} ${splitter})
         target_link_libraries(${EXECUTABLE_NAME} ${example})
+        target_link_libraries(${EXECUTABLE_NAME} ${splitter})
  endif()
 
 

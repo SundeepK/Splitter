@@ -5,7 +5,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <Box2D/Box2D.h>
-#include "B2Builder.h"
 #include <math.h>
 #include "SFMLB2dDebugDraw.h"
 #include "ActionController.h"
@@ -13,6 +12,8 @@
 #include <functional>
 #include <iostream>
 #include "Splitter.h"
+#include "B2Builder.h"
+
 
 struct segment {
     b2Vec2 p1;

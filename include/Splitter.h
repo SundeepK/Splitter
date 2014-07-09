@@ -2,11 +2,11 @@
 #define RAYCASTCALLBACK_H
 
 #include <vector>
-#include <Box2D/Common/b2Settings.h>
-#include <Box2D.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
+#include <Box2D/Common/b2Settings.h>
+#include <Box2D/Box2D.h>
 #include <unordered_map>
 #include "TemplateHasher.h"
 #include "B2BodySplitCallback.h"
