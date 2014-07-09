@@ -1,1 +1,0 @@
-/usr/bin/c++    -std=c++11 -g    CMakeFiles/Splitter.dir/example/main.cpp.o  -o Splitter -rdynamic /usr/local/lib/libsfml-system.so /usr/local/lib/libsfml-window.so /usr/local/lib/libsfml-graphics.so /usr/local/lib/libsfml-network.so /usr/local/lib/libsfml-audio.so /usr/local/lib/libBox2D.a -Wl,-rpath,/usr/local/lib: 

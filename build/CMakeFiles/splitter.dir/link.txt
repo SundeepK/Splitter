@@ -1,1 +1,0 @@
-/usr/bin/c++  -fPIC  -std=c++11 -g   -shared -Wl,-soname,libsplitter.so -o libsplitter.so CMakeFiles/splitter.dir/src/Splitter.cpp.o CMakeFiles/splitter.dir/src/TextureMapper.cpp.o 
