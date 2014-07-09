@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 2.6)
 project(Splitter)
+cmake_minimum_required(VERSION 2.6)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # Enable debug symbols by default
@@ -9,31 +9,49 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
 
   include_directories("${PROJECT_BINARY_DIR}")
   include_directories("${PROJECT_SOURCE_DIR}/include")
+  include_directories("${PROJECT_SOURCE_DIR}/example")
   include_directories("${PROJECT_SOURCE_DIR}/src")
   include_directories("${PROJECT_SOURCE_DIR}/Box2d-tools/Box2d\ tools")
   include_directories("${PROJECT_SOURCE_DIR}/SFML-tools/SFML-tools")
 
-  set(SHAD "${PROJECT_SOURCE_DIR}/shaders/")
 
-  set(SRC "${PROJECT_SOURCE_DIR}/src/")
+  set(SRC "${PROJECT_SOURCE_DIR}/src")
+  set(HEAD "${PROJECT_SOURCE_DIR}/include")
+  set(EXAMPLE "${PROJECT_SOURCE_DIR}/example")
   set(B2DT_SRC "${PROJECT_SOURCE_DIR}/Box2d-tools/Box2d\ tools/src")
-  set(B2DT_HEAD "${PROJECT_SOURCE_DIR}/Box2d-tools/Box2d\ tools/header")
+  set(B2DT_HEAD "${PROJECT_SOURCE_DIR}/Box2d-tools/Box2d\ tools/include")
   set(SFMLT_SRC "${PROJECT_SOURCE_DIR}/SFML-tools/SFML-tools/src")
-  set(SFMLT_HEAD "${PROJECT_SOURCE_DIR}/SFML-tools/SFML-tools/header")
+  set(SFMLT_HEAD "${PROJECT_SOURCE_DIR}/SFML-tools/SFML-tools/include")
 
   # Define sources and executable
-  set(EXECUTABLE_NAME Splitter)
+  set(PROJECT_NAME Splitter)
+  set(TEXTURES "${PROJECT_SOURCE_DIR}/textures/")
   
+  set(SPLITTER_HEAD
+      "${HEAD}/Splitter.h" 
+      "${HEAD}/TextureMapper.h"
+      "${HEAD}/B2BodySplitCallback.h"   
+      "${HEAD}/B2vecHasher.h" 
+     )
+
   set(SPLITTER_SRC
       "${SRC}/Splitter.cpp" 
       "${SRC}/TextureMapper.cpp")
 
+
+  set(SPLITTER_EXAMPLE
+		"${EXAMPLE}/B2DWorld.cpp"
+		"${EXAMPLE}/B2DWorld.h"
+		"${EXAMPLE}/main.cpp"
+	)
+
   set(BOX2D_TOOLS_HEAD
-       "${B2DT_HEAD}/B2BoxBuilder.cpp"
-       "${B2DT_HEAD}/B2DBuilder.cpp"
-       "${B2DT_HEAD}/Box2DConstants.cpp"
-       "${B2DT_HEAD}/SFMLB2dDebugDraw.cpp"
-       "${B2DT_HEAD}/Vec.cpp"
+       "${B2DT_HEAD}/B2BoxBuilder.h"
+       "${B2DT_HEAD}/B2Builder.h"
+       "${B2DT_HEAD}/Box2DConstants.h"
+       "${B2DT_HEAD}/B2DBuilderHelper.h"
+       "${B2DT_HEAD}/SFMLB2dDebugDraw.h"
+       "${B2DT_HEAD}/Vec.h"
      )
 
 
@@ -54,36 +72,47 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
       "${SFMLT_HEAD}/InputNodes.h"
       "${SFMLT_HEAD}/TemplateHasher.h"
       )
-  
+             
+
   set(SFML_TOOLS_SRC
-      "${SFMLT_SRC}/ActionController.cpp"
       "${SFMLT_SRC}/Action.cpp"
-      "${SFMLT_SRC}/ActionNode.cpp"
-      "${SFMLT_SRC}/EventNode.cpp"   
+      "${SFMLT_SRC}/AndEventNode.cpp"
       "${SFMLT_SRC}/InputEventNode.cpp"
-      "${SFMLT_SRC}/InputNodes.cpp"
-      "${SFMLT_SRC}/TemplateHasher.cpp"
+      "${SFMLT_SRC}/OrEventNode.cpp"   
+      "${SFMLT_SRC}/RealtimeAndNode.cpp"
+      "${SFMLT_SRC}/RealTimeNode.cpp"
+      "${SFMLT_SRC}/RealtimeOrNode.cpp"
       )
-  
-  #file(GLOB DAYLIGHT_SOURCES *.cpp)
-  add_executable(${EXECUTABLE_NAME} ${DAYLIGHT_SOURCES})
+ 
+ file(COPY ${TEXTURES} DESTINATION "textures")
 
-  file(COPY ${SHAD} DESTINATION "shaders")
+ add_library(box2d_tools SHARED ${BOX2D_TOOLS_HEAD} ${BOX2D_TOOLS_SRC})
+ add_library(sfml_tools SHARED ${SFML_TOOLS_HEAD} ${SFML_TOOLS_SRC})
+ add_library(splitter SHARED ${SPLITTER_HEAD} ${SPLITTER_SRC})
+ add_library(example SHARED ${SPLITTER_EXAMPLE})
 
-  set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
-  #Find any version 2.X of SFML
-  #See the FindSFML.cmake file for additional details and instructions
-  find_package(SFML 2 REQUIRED system window graphics network audio)
-  if(SFML_FOUND)
-        include_directories(${SFML_INCLUDE_DIR})
-          target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES})
-      endif()
+ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
+ #Find any version 2.X of SFML
+ #See the FindSFML.cmake file for additional details and instructions
+ find_package(SFML 2 REQUIRED system window graphics network audio)
+ find_package(BOX2D)
+ set(EXECUTABLE_NAME Splitter)
+
+ if(SFML_FOUND)
+		add_executable(${EXECUTABLE_NAME} ${EXAMPLE}/main.cpp)
+        target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES})
+        target_link_libraries(${EXECUTABLE_NAME} ${BOX2D_LIBRARIES})
+        target_link_libraries(${EXECUTABLE_NAME} ${box2d_tools})
+        target_link_libraries(${EXECUTABLE_NAME} ${sfml_tools})
+        target_link_libraries(${EXECUTABLE_NAME} ${splitter})
+        target_link_libraries(${EXECUTABLE_NAME} ${example})
+ endif()
 
 
-      # Install target
-      install(TARGETS ${EXECUTABLE_NAME} DESTINATION bin)
+ #Install target
+ install(TARGETS ${EXECUTABLE_NAME} DESTINATION bin)
 
 
-      # CPack packaging
-      include(InstallRequiredSystemLibraries)
-      include(CPack)
+ #CPack packaging
+ include(InstallRequiredSystemLibraries)
+ include(CPack)

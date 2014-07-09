@@ -1,0 +1,5 @@
+/media/sundeep/3 tb Vol/code/splitter/build/CMakeFiles/Splitter.dir
+/media/sundeep/3 tb Vol/code/splitter/build/CMakeFiles/box2d_tools.dir
+/media/sundeep/3 tb Vol/code/splitter/build/CMakeFiles/example.dir
+/media/sundeep/3 tb Vol/code/splitter/build/CMakeFiles/sfml_tools.dir
+/media/sundeep/3 tb Vol/code/splitter/build/CMakeFiles/splitter.dir
