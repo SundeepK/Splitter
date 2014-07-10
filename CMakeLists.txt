@@ -98,7 +98,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
  #See the FindSFML.cmake file for additional details and instructions
  find_package(SFML 2 REQUIRED system window graphics network audio)
  find_package(BOX2D REQUIRED)
-
  find_package(OpenGL REQUIRED)
 
 
