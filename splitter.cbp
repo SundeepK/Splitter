@@ -83,6 +83,7 @@
 		<Unit filename="example/B2DWorld.cpp" />
 		<Unit filename="example/main.cpp" />
 		<Unit filename="include/B2BodySplitCallback.h" />
+		<Unit filename="include/B2DWorld.h" />
 		<Unit filename="include/B2vecHasher.h" />
 		<Unit filename="include/Splitter.h" />
 		<Unit filename="include/TextureMapper.h" />
