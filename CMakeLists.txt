@@ -94,17 +94,16 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
  add_library(example SHARED ${SPLITTER_EXAMPLE})
 
  set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
- #Find any version 2.X of SFML
- #See the FindSFML.cmake file for additional details and instructions
+
+
  find_package(SFML 2 REQUIRED system window graphics network audio)
  find_package(BOX2D REQUIRED)
  find_package(OpenGL REQUIRED)
 
 
-
  set(EXECUTABLE_NAME Splitter)
 
- if(SFML_FOUND)
+ if(SFML_FOUND AND BOX2D_FOUND AND OPENGL_FOUND)
 		add_executable(${EXECUTABLE_NAME} ${EXAMPLE}/main.cpp ${EXAMPLE}/B2DWorld.cpp ${BOX2D_TOOLS_SRC} ${SFML_TOOLS_SRC} ${SPLITTER_SRC} )
         target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES})
         target_link_libraries(${EXECUTABLE_NAME} ${GLUT_LIBRARIES})
@@ -116,6 +115,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "")
         target_link_libraries(${EXECUTABLE_NAME} ${sfml_tools})
         target_link_libraries(${EXECUTABLE_NAME} ${example})
         target_link_libraries(${EXECUTABLE_NAME} ${splitter})
+ ELSE()
+	    message(SEND_ERROR "SFML, Box2d and OpenGl is required to build splitter")
  endif()
 
 
