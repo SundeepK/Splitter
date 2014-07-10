@@ -81,7 +81,6 @@
 		<Unit filename="SFML-tools/SFML-tools/src/RealtimeAndNode.cpp" />
 		<Unit filename="SFML-tools/SFML-tools/src/RealtimeOrNode.cpp" />
 		<Unit filename="example/B2DWorld.cpp" />
-		<Unit filename="example/B2DWorld.h" />
 		<Unit filename="example/main.cpp" />
 		<Unit filename="include/B2BodySplitCallback.h" />
 		<Unit filename="include/B2vecHasher.h" />

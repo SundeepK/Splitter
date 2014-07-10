@@ -1,0 +1,80 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../Box2d-tools/Box2d tools/include/B2BoxBuilder.h
+B2DBuilderHelper.h
+../Box2d-tools/Box2d tools/include/B2DBuilderHelper.h
+B2Builder.h
+../Box2d-tools/Box2d tools/include/B2Builder.h
+
+../Box2d-tools/Box2d tools/include/B2Builder.h
+Box2D/Box2D.h
+-
+
+../Box2d-tools/Box2d tools/include/B2DBuilderHelper.h
+SFML/System.hpp
+-
+SFML/Graphics.hpp
+-
+SFML/Window.hpp
+-
+Box2D/Box2D.h
+-
+Box2DConstants.h
+../Box2d-tools/Box2d tools/include/Box2DConstants.h
+B2Builder.h
+../Box2d-tools/Box2d tools/include/B2Builder.h
+memory.h
+-
+
+../Box2d-tools/Box2d tools/include/Box2DConstants.h
+
+../Box2d-tools/Box2d tools/include/SFMLB2dDebugDraw.h
+Box2DConstants.h
+../Box2d-tools/Box2d tools/include/Box2DConstants.h
+memory.h
+-
+SFML/System.hpp
+-
+SFML/Graphics.hpp
+-
+SFML/Window.hpp
+-
+Box2D/Box2D.h
+-
+
+../Box2d-tools/Box2d tools/include/Vec.h
+Box2D/Box2D.h
+-
+SFML/Graphics.hpp
+-
+Box2DConstants.h
+../Box2d-tools/Box2d tools/include/Box2DConstants.h
+
+/media/sundeep/3 tb Vol/code/splitter/Box2d-tools/Box2d tools/src/B2BoxBuilder.cpp
+B2BoxBuilder.h
+/media/sundeep/3 tb Vol/code/splitter/Box2d-tools/Box2d tools/src/B2BoxBuilder.h
+iostream
+-
+
+/media/sundeep/3 tb Vol/code/splitter/Box2d-tools/Box2d tools/src/B2DBuilder.cpp
+B2DBuilderHelper.h
+/media/sundeep/3 tb Vol/code/splitter/Box2d-tools/Box2d tools/src/B2DBuilderHelper.h
+
+/media/sundeep/3 tb Vol/code/splitter/Box2d-tools/Box2d tools/src/Box2DConstants.cpp
+Box2DConstants.h
+/media/sundeep/3 tb Vol/code/splitter/Box2d-tools/Box2d tools/src/Box2DConstants.h
+
+/media/sundeep/3 tb Vol/code/splitter/Box2d-tools/Box2d tools/src/SFMLB2dDebugDraw.cpp
+SFMLB2dDebugDraw.h
+/media/sundeep/3 tb Vol/code/splitter/Box2d-tools/Box2d tools/src/SFMLB2dDebugDraw.h
+
+/media/sundeep/3 tb Vol/code/splitter/Box2d-tools/Box2d tools/src/Vec.cpp
+Vec.h
+/media/sundeep/3 tb Vol/code/splitter/Box2d-tools/Box2d tools/src/Vec.h
+

@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC  -std=c++11 -g   -shared -Wl,-soname,libexample.so -o libexample.so CMakeFiles/example.dir/example/B2DWorld.cpp.o CMakeFiles/example.dir/example/main.cpp.o 

@@ -56,7 +56,7 @@ int main() {
     GLuint texture = 0;
     {
         sf::Image image;
-        if (!image.loadFromFile("1.png"))
+        if (!image.loadFromFile("textures/1.png"))
             return EXIT_FAILURE;
         image.flipVertically();
         glGenTextures(1, &texture);

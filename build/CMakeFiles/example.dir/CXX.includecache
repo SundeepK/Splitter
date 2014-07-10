@@ -1,0 +1,228 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../Box2d-tools/Box2d tools/include/B2BoxBuilder.h
+B2DBuilderHelper.h
+../Box2d-tools/Box2d tools/include/B2DBuilderHelper.h
+B2Builder.h
+../Box2d-tools/Box2d tools/include/B2Builder.h
+
+../Box2d-tools/Box2d tools/include/B2Builder.h
+Box2D/Box2D.h
+-
+
+../Box2d-tools/Box2d tools/include/B2DBuilderHelper.h
+SFML/System.hpp
+-
+SFML/Graphics.hpp
+-
+SFML/Window.hpp
+-
+Box2D/Box2D.h
+-
+Box2DConstants.h
+../Box2d-tools/Box2d tools/include/Box2DConstants.h
+B2Builder.h
+../Box2d-tools/Box2d tools/include/B2Builder.h
+memory.h
+-
+
+../Box2d-tools/Box2d tools/include/Box2DConstants.h
+
+../Box2d-tools/Box2d tools/include/SFMLB2dDebugDraw.h
+Box2DConstants.h
+../Box2d-tools/Box2d tools/include/Box2DConstants.h
+memory.h
+-
+SFML/System.hpp
+-
+SFML/Graphics.hpp
+-
+SFML/Window.hpp
+-
+Box2D/Box2D.h
+-
+
+../Box2d-tools/Box2d tools/include/Vec.h
+Box2D/Box2D.h
+-
+SFML/Graphics.hpp
+-
+Box2DConstants.h
+../Box2d-tools/Box2d tools/include/Box2DConstants.h
+
+../SFML-tools/SFML-tools/include/Action.h
+SFML/Graphics.hpp
+-
+SFML/System.hpp
+-
+SFML/Window.hpp
+-
+EventNode.h
+../SFML-tools/SFML-tools/include/EventNode.h
+InputNodes.h
+../SFML-tools/SFML-tools/include/InputNodes.h
+memory
+-
+
+../SFML-tools/SFML-tools/include/ActionController.h
+unordered_map
+-
+Action.h
+../SFML-tools/SFML-tools/include/Action.h
+vector
+-
+SFML/Graphics.hpp
+-
+SFML/System.hpp
+-
+SFML/Window.hpp
+-
+TemplateHasher.h
+../SFML-tools/SFML-tools/include/TemplateHasher.h
+
+../SFML-tools/SFML-tools/include/ActionNode.h
+EventNode.h
+../SFML-tools/SFML-tools/include/EventNode.h
+
+../SFML-tools/SFML-tools/include/EventNode.h
+SFML/Graphics.hpp
+-
+SFML/System.hpp
+-
+SFML/Window.hpp
+-
+vector
+-
+memory
+-
+
+../SFML-tools/SFML-tools/include/InputEventNode.h
+EventNode.h
+../SFML-tools/SFML-tools/include/EventNode.h
+ActionNode.h
+../SFML-tools/SFML-tools/include/ActionNode.h
+
+../SFML-tools/SFML-tools/include/InputNodes.h
+EventNode.h
+../SFML-tools/SFML-tools/include/EventNode.h
+memory
+-
+InputEventNode.h
+../SFML-tools/SFML-tools/include/InputEventNode.h
+EventNode.h
+../SFML-tools/SFML-tools/include/EventNode.h
+
+../SFML-tools/SFML-tools/include/TemplateHasher.h
+
+../include/B2BodySplitCallback.h
+Box2D/Box2D.h
+-
+B2BoxBuilder.h
+../include/B2BoxBuilder.h
+
+../include/B2DWorld.h
+SFML/System.hpp
+-
+SFML/Graphics.hpp
+-
+SFML/Window.hpp
+-
+Box2D/Box2D.h
+-
+math.h
+-
+SFMLB2dDebugDraw.h
+../include/SFMLB2dDebugDraw.h
+ActionController.h
+../include/ActionController.h
+Action.h
+../include/Action.h
+functional
+-
+iostream
+-
+Splitter.h
+../include/Splitter.h
+B2Builder.h
+../include/B2Builder.h
+
+../include/B2vecHasher.h
+Box2D/Box2D.h
+-
+
+../include/Splitter.h
+vector
+-
+SFML/Graphics.hpp
+-
+SFML/System.hpp
+-
+SFML/Window.hpp
+-
+Box2D/Common/b2Settings.h
+-
+Box2D/Box2D.h
+-
+unordered_map
+-
+TemplateHasher.h
+../include/TemplateHasher.h
+B2BodySplitCallback.h
+../include/B2BodySplitCallback.h
+B2BoxBuilder.h
+../include/B2BoxBuilder.h
+Vec.h
+../include/Vec.h
+algorithm
+-
+
+../include/TextureMapper.h
+B2vecHasher.h
+../include/B2vecHasher.h
+unordered_map
+-
+Box2D/Box2D.h
+-
+
+/media/sundeep/3 tb Vol/code/splitter/example/main.cpp
+SFML/Graphics.hpp
+-
+SFML/System.hpp
+-
+SFML/Window.hpp
+-
+B2DWorld.h
+/media/sundeep/3 tb Vol/code/splitter/example/B2DWorld.h
+B2BoxBuilder.h
+/media/sundeep/3 tb Vol/code/splitter/example/B2BoxBuilder.h
+functional
+-
+iostream
+-
+ActionController.h
+/media/sundeep/3 tb Vol/code/splitter/example/ActionController.h
+string
+-
+math.h
+-
+SFML/OpenGL.hpp
+-
+GL/glut.h
+-
+TemplateHasher.h
+/media/sundeep/3 tb Vol/code/splitter/example/TemplateHasher.h
+unordered_map
+-
+algorithm
+-
+B2vecHasher.h
+/media/sundeep/3 tb Vol/code/splitter/example/B2vecHasher.h
+TextureMapper.h
+/media/sundeep/3 tb Vol/code/splitter/example/TextureMapper.h
+
