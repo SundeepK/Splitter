@@ -57,7 +57,7 @@ Splitter allows you to register both a callback class (which much extend B2BodyS
             newSplitBody->SetUserData(texturesForNewBody);
         }
 
-        bodiesToDelete.push_back(body); //keep pointers to b2Body to delete at a safe time
+        bodiesToDelete.push_back(parentBody); //keep pointers to b2Body to delete at a safe time
         delete parentBodyTexCoords; 
     });
 
