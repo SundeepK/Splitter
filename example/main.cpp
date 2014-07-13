@@ -213,7 +213,7 @@ int main() {
             }
 
             glPushMatrix();
-            b2Vec2 center = bn->GetWorldCenter();
+            b2Vec2 center = bn->GetPosition();
             float angle = bn->GetAngle();
             glTranslatef(center.x*M2P,center.y*M2P,0);
             glRotatef(angle*180.0/M_PI,0,0,1);
