@@ -80,10 +80,12 @@ int main() {
     B2BoxBuilder builder(70,70);
     builder
     .bodyType(b2_dynamicBody)
-    .setPosition(b2Vec2(200,100))
+    .setPosition(b2Vec2(700,100))
+    .setRestitution(0.5f)
     .setDensity(1.0f);
     b2Body* b = box2DWorld.createB2Body(&builder);
     b->ApplyLinearImpulse( b2Vec2(0.1f,0.1f), b->GetWorldCenter(), true);
+    b->ApplyTorque(20,true);
 
     std::vector<b2Vec2> texs;
     texs.push_back(b2Vec2(0.0f,1.f));
@@ -92,7 +94,7 @@ int main() {
     texs.push_back(b2Vec2(0.0f,0.0f));
     Texcoords* b1textcoords = new Texcoords;
     b1textcoords->textCoords = texs;
-
+    b->ApplyTorque( 50, true );
     b->SetUserData(b1textcoords);
 
 
@@ -105,7 +107,7 @@ int main() {
     B2BoxBuilder secondndbox(70,70);
     secondndbox
     .bodyType(b2_dynamicBody)
-    .setPosition(b2Vec2(120,10))
+    .setPosition(b2Vec2(500,10))
     .setRestitution(0.3f)
     .setDensity(1.0f);
     b2Body* b2 = box2DWorld.createB2Body(&secondndbox);
@@ -118,7 +120,7 @@ int main() {
     B2BoxBuilder groundShapebuilder(1200, 50);
     groundShapebuilder
     .bodyType(b2_staticBody)
-    .setPosition(b2Vec2(0,400))
+    .setPosition(b2Vec2(0,700))
     .setDensity(1.0f);
     box2DWorld.createB2Body(&groundShapebuilder);
 
