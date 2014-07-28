@@ -43,6 +43,7 @@ Splitter allows you to register both a callback class (which much extend B2BodyS
 ```CPP
 
     //example callback
+    std::vector<b2Body*> bodiesToDelete;
     splitter.registerBodySplitCallback([&box2dWorld](std::vector<B2BoxBuilder> splitBodies, b2Body* parentBody) -> void {
        TextureMapper textureMapper(30.0f); //world scale
        Texcoords *parentBodyTexCoords   = (Texcoords*) parentBody->GetUserData();
@@ -56,7 +57,7 @@ Splitter allows you to register both a callback class (which much extend B2BodyS
             newSplitBody->SetUserData(texturesForNewBody);
         }
 
-        box2dWorld.deleteBody(body);
+        bodiesToDelete.push_back(parentBody); //keep pointers to b2Body to delete at a safe time
         delete parentBodyTexCoords; 
     });
 
