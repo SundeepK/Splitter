@@ -2,6 +2,7 @@
 /bin
 /build
 /obj
+/debug
 
 #tmp files
 *~
