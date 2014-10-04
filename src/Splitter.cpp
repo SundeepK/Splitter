@@ -1,4 +1,4 @@
-#include "Splitter.h"
+#include <include/Splitter.h>
 #include "Box2DConstants.h"
 #include <iostream>
 Splitter::Splitter() {
