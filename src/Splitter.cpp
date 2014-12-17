@@ -1,4 +1,4 @@
-#include <include/Splitter.h>
+#include <splitter/Splitter.h>
 #include "Box2DConstants.h"
 #include <iostream>
 Splitter::Splitter() {
@@ -24,6 +24,7 @@ PointsDirection Splitter::isCCW(b2Vec2 p1, b2Vec2 p2, b2Vec2 p3) {
 }
 
 float32 Splitter::ReportFixture(b2Fixture* fixture, const b2Vec2& point,const b2Vec2& normal, float32 fraction) {
+	std::cout << "in callback" << std::endl;
     processIntersection(fixture->GetBody(),point);
     return 1;
 }

@@ -1,4 +1,4 @@
-#include <include/TextureMapper.h>
+#include <splitter/TextureMapper.h>
 
 TextureMapper::TextureMapper(float scale) : m_scale(scale) {
 }

@@ -1,4 +1,4 @@
-#include <include/B2DWorld.h>
+#include <splitter/B2DWorld.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 B2DWorld::B2DWorld(float gravity) : m_world(b2Vec2(0.f, gravity))
