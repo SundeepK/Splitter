@@ -22,6 +22,7 @@ B2BoxBuilder getBox2dBuilder(std::vector<b2Vec2> points, b2Body* body) {
     return builder;
 }
 
+
 int main() {
     sf::ContextSettings settings;
     settings.depthBits = 24;
